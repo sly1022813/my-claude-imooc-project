@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"d:/claude-video-coding/\")",
+      "Read(//d/claude-video-coding/**)"
+    ]
+  }
+}
