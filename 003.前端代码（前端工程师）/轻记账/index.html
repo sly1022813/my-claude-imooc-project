@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="轻记账 - 简单好用的个人/商户财务记账工具">
+  <meta name="theme-color" content="#9b3f5a">
+  <title>轻记账 - 您的财务管家</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-surface: #fbf9f8;
+      --color-surface-dim: #dcd9d9;
+      --color-surface-cream: #FFF5F7;
+      --color-surface-card: #FFFFFF;
+      --color-border-soft: #FFE4E8;
+      --color-primary: #9b3f5a;
+      --color-primary-container: #ff8fab;
+      --color-on-primary: #ffffff;
+      --color-on-primary-container: #79243f;
+      --color-secondary: #884c5d;
+      --color-secondary-container: #fdb2c5;
+      --color-on-secondary: #ffffff;
+      --color-on-secondary-container: #7a4151;
+      --color-income-mint: #7ED7C1;
+      --color-expense-coral: #FF6B6B;
+      --color-pending-amber: #FFB347;
+      --color-text-primary: #1b1c1c;
+      --color-text-secondary: #666666;
+      --color-text-muted: #999999;
+      --radius-sm: 0.25rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-full: 9999px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background-color: var(--color-surface-cream);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      overscroll-behavior: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--color-surface-cream); }
+    ::-webkit-scrollbar-thumb { background: var(--color-primary-container); border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+    .card {
+      background: var(--color-surface-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border-soft);
+      padding: 1rem;
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.625rem 1rem; border-radius: var(--radius-md); font-weight: 600;
+      font-size: 0.875rem; transition: all 0.15s ease; cursor: pointer;
+      border: none; outline: none; text-decoration: none;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn-primary { background: var(--color-primary); color: var(--color-on-primary); }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background: transparent; color: var(--color-primary); border: 1.5px solid var(--color-primary-container); }
+    .btn-ghost { background: transparent; color: var(--color-text-secondary); }
+    .btn-ghost:hover { background: var(--color-surface-cream); }
+    .input {
+      width: 100%; height: 2.75rem; padding: 0 0.75rem;
+      border-radius: var(--radius-md); background: var(--color-surface-card);
+      border: 1px solid var(--color-border-soft); color: var(--color-text-primary);
+      font-size: 0.875rem; outline: none; transition: all 0.15s ease;
+    }
+    .input:focus { border-color: var(--color-primary-container); box-shadow: 0 0 0 3px rgba(255, 143, 171, 0.15); }
+    .badge {
+      display: inline-flex; align-items: center; padding: 0.125rem 0.5rem;
+      border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600;
+    }
+    .badge-income { background: rgba(126, 215, 193, 0.2); color: #2b9e84; }
+    .badge-expense { background: rgba(255, 107, 107, 0.15); color: var(--color-expense-coral); }
+    .segmented-control {
+      display: inline-flex; padding: 0.25rem; background: var(--color-surface-cream);
+      border-radius: var(--radius-md); gap: 0.25rem;
+    }
+    .segmented-item {
+      flex: 1; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-weight: 600;
+      font-size: 0.875rem; color: var(--color-text-secondary); background: transparent;
+      border: none; cursor: pointer; transition: all 0.2s ease;
+    }
+    .segmented-item.active { background: var(--color-surface-card); color: var(--color-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-md); color: var(--color-text-secondary);
+      transition: all 0.2s ease; text-decoration: none;
+    }
+    .nav-item:hover { background: rgba(155, 63, 90, 0.08); color: var(--color-text-primary); }
+    .nav-item.active { background: var(--color-secondary-container); color: var(--color-on-secondary-container); font-weight: 600; }
+    .amount-display { font-family: 'Space Mono', monospace; font-size: 2rem; font-weight: 700; }
+    .amount-lg { font-family: 'Space Mono', monospace; font-size: 1.375rem; font-weight: 700; }
+    .amount-md { font-family: 'Space Mono', monospace; font-size: 1rem; font-weight: 600; }
+    .kpi-card {
+      background: var(--color-surface-card); border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border-soft); padding: 1rem;
+    }
+    .toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; padding: 0.75rem 1rem;
+      background: var(--color-text-primary); color: white; border-radius: var(--radius-md);
+      font-size: 0.875rem; z-index: 1000; transform: translateY(100px); opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .category-chip {
+      display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-md); background: var(--color-surface-cream);
+      color: var(--color-text-secondary); font-size: 0.875rem; cursor: pointer;
+    }
+    .category-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 0.75rem; border-radius: var(--radius-lg); cursor: pointer; transition: all 0.2s;
+      background: var(--color-surface-cream); border: 2px solid transparent;
+    }
+    .category-btn.selected { background: var(--color-secondary-container); color: var(--color-on-secondary-container); border-color: var(--color-primary-container); }
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; background: var(--color-surface-card);
+      border-top: 1px solid var(--color-border-soft); padding: 0.5rem 0;
+      display: flex; justify-content: space-around; z-index: 100;
+    }
+    .bottom-nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+      padding: 0.5rem; color: var(--color-text-muted); text-decoration: none;
+      font-size: 0.625rem;
+    }
+    .bottom-nav-item .material-symbols-outlined { font-size: 1.375rem; }
+    .bottom-nav-item.active { color: var(--color-primary); }
+    .sidebar-nav {
+      position: fixed; left: 0; top: 0; bottom: 0; width: 16rem;
+      background: var(--color-surface-cream); padding: 1rem; display: flex;
+      flex-direction: column; z-index: 50;
+    }
+    .main-content { margin-left: 16rem; min-height: 100vh; padding: 1.5rem; padding-bottom: 5rem; }
+    .page { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; color: var(--color-text-muted); }
+    .empty-state .material-symbols-outlined { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    .transaction-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: var(--radius-md); cursor: pointer; }
+    .transaction-item:hover { background: var(--color-surface-cream); }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: var(--color-surface-cream); padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; }
+    .data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-border-soft); }
+    .text-sm { font-size: 0.875rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .font-medium { font-weight: 500; }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+    .text-center { text-align: center; }
+    .text-primary { color: var(--color-primary); }
+    .text-income-mint { color: var(--color-income-mint); }
+    .text-expense-coral { color: var(--color-expense-coral); }
+    .text-text-secondary { color: var(--color-text-secondary); }
+    .text-text-muted { color: var(--color-text-muted); }
+    .bg-surface-cream { background-color: var(--color-surface-cream); }
+    .bg-surface-card { background-color: var(--color-surface-card); }
+    .bg-income-mint { background-color: var(--color-income-mint); }
+    .bg-expense-coral { background-color: var(--color-expense-coral); }
+    .bg-primary { background-color: var(--color-primary); }
+    .text-white { color: white; }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .flex-1 { flex: 1; }
+    .flex-wrap { flex-wrap: wrap; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .items-baseline { align-items: baseline; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-end { justify-content: flex-end; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .space-y-1 > * + * { margin-top: 0.25rem; }
+    .space-y-2 > * + * { margin-top: 0.5rem; }
+    .space-y-3 > * + * { margin-top: 0.75rem; }
+    .space-y-4 > * + * { margin-top: 1rem; }
+    .space-y-6 > * + * { margin-top: 1.5rem; }
+    .grid { display: grid; }
+    .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .col-span-2 { grid-column: span 2 / span 2; }
+    .col-span-3 { grid-column: span 3 / span 3; }
+    .col-span-4 { grid-column: span 4 / span 4; }
+    .col-span-9 { grid-column: span 9 / span 9; }
+    .w-full { width: 100%; }
+    .w-8 { width: 2rem; }
+    .w-10 { width: 2.5rem; }
+    .w-12 { width: 3rem; }
+    .h-8 { height: 2rem; }
+    .h-10 { height: 2.5rem; }
+    .h-11 { height: 2.75rem; }
+    .h-12 { height: 3rem; }
+    .rounded-full { border-radius: var(--radius-full); }
+    .rounded-lg { border-radius: var(--radius-lg); }
+    .rounded-xl { border-radius: var(--radius-lg); }
+    .p-1 { padding: 0.25rem; }
+    .p-3 { padding: 0.75rem; }
+    .p-4 { padding: 1rem; }
+    .p-8 { padding: 2rem; }
+    .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+    .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+    .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+    .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+    .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+    .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .pt-2 { padding-top: 0.5rem; }
+    .pt-4 { padding-top: 1rem; }
+    .pb-4 { padding-bottom: 1rem; }
+    .mb-1 { margin-bottom: 0.25rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-4 { margin-top: 1rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .mt-auto { margin-top: auto; }
+    .mr-1 { margin-right: 0.25rem; }
+    .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
+    .max-w-md { max-width: 28rem; }
+    .min-h-screen { min-height: 100vh; }
+    .min-w-0 { min-width: 0; }
+    .flex-1 { flex: 1; }
+    .flex-shrink-0 { flex-shrink: 0; }
+    .overflow-hidden { overflow: hidden; }
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .fixed { position: fixed; }
+    .sticky { position: sticky; }
+    .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+    .top-0 { top: 0; }
+    .right-0 { right: 0; }
+    .left-0 { left: 0; }
+    .bottom-0 { bottom: 0; }
+    .left-3 { left: 0.75rem; }
+    .right-3 { right: 0.75rem; }
+    .top-1\/2 { top: 50%; }
+    .-translate-y-1\/2 { transform: translateY(-50%); }
+    .z-40 { z-index: 40; }
+    .z-50 { z-index: 50; }
+    .z-100 { z-index: 100; }
+    .cursor-pointer { cursor: pointer; }
+    .hidden { display: none; }
+    .block { display: block; }
+    .inline { display: inline; }
+    .shadow-card { box-shadow: 0 4px 16px -2px rgba(255, 143, 171, 0.12); }
+    .shadow-button { box-shadow: 0 4px 16px -2px rgba(255, 143, 171, 0.25); }
+    .border-t { border-top-width: 1px; }
+    .border-b { border-bottom-width: 1px; }
+    .border-border-soft { border-color: var(--color-border-soft); }
+    .border-transparent { border-color: transparent; }
+    .border-primary { border-color: var(--color-primary); }
+    .tracking-tight { letter-spacing: -0.025em; }
+    .whitespace-nowrap { white-space: nowrap; }
+    .resize-none { resize: none; }
+    .select-none { user-select: none; }
+    .pointer-events-none { pointer-events: none; }
+    .opacity-0 { opacity: 0; }
+    .select-none { user-select: none; }
+    .text-xs { font-size: 0.75rem; }
+    .text-sm { font-size: 0.875rem; }
+    .leading-tight { line-height: 1.25; }
+    .leading-normal { line-height: 1.5; }
+    .antialiased { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    .placeholder-text-muted::placeholder { color: var(--color-text-muted); }
+    .hover\:underline:hover { text-decoration: underline; }
+    .hover\:bg-surface-cream:hover { background-color: var(--color-surface-cream); }
+    .hover\:text-primary:hover { color: var(--color-primary); }
+    .transition-all { transition: all 0.2s ease; }
+    .transition-colors { transition: color 0.15s, background-color 0.15s; }
+    .transition-opacity { transition: opacity 0.15s; }
+    .border-2 { border-width: 2px; }
+    .border { border-width: 1px; }
+    .border-t { border-top-width: 1px; }
+
+    /* Input with icon padding */
+    .pl-10 { padding-left: 2.5rem; }
+    .pr-10 { padding-right: 2.5rem; }
+
+    /* Logout button */
+    .btn-logout {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      padding: 0.5rem 0.75rem;
+      background: #FF6B6B;
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-logout:hover { opacity: 0.9; background: #ff5252; }
+    .btn-logout:active { transform: scale(0.96); }
+    .btn-logout .material-symbols-outlined { font-size: 1.125rem; }
+
+    /* Login page specific styles */
+    .login-input-wrapper {
+      position: relative;
+    }
+    .login-input-wrapper .material-symbols-outlined {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+      font-size: 1.25rem;
+      pointer-events: none;
+    }
+    .login-input-wrapper .input {
+      width: 100%;
+      height: 2.75rem;
+      padding-left: 2.75rem;
+      padding-right: 0.75rem;
+      border-radius: var(--radius-md);
+      background: var(--color-surface-card);
+      border: 1px solid var(--color-border-soft);
+      color: var(--color-text-primary);
+      font-size: 0.875rem;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+    .login-input-wrapper .input:focus {
+      border-color: var(--color-primary-container);
+      box-shadow: 0 0 0 3px rgba(255, 143, 171, 0.15);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar-nav { display: none !important; }
+      .main-content { margin-left: 0; padding: 1rem; padding-bottom: 5rem; }
+      .md\:flex-row { flex-direction: row; }
+      .md\:items-end { align-items: flex-end; }
+      .md\:col-span-2 { grid-column: span 2 / span 2; }
+      .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (min-width: 768px) {
+      .md\:flex { display: flex; }
+      .md\:flex-col { flex-direction: column; }
+      .md\:items-end { align-items: flex-end; }
+      .md\:col-span-2 { grid-column: span 2 / span 2; }
+      .md\:col-span-3 { grid-column: span 3 / span 3; }
+      .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1024px) {
+      .lg\:flex { display: flex; }
+      .lg\:flex-col { flex-direction: column; }
+    }
+    @media (min-width: 1280px) {
+      .xl\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    /* Accent checkbox */
+    input[type="checkbox"] { accent-color: var(--color-primary); }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // ============ Utils ============
+    const Utils = {
+      formatDate(date, format = 'date') {
+        const d = date instanceof Date ? date : new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        switch (format) {
+          case 'full': return `${year}年${month}月${day}日`;
+          case 'date': return `${year}年${month}月${day}日`;
+          case 'datetime': return `${month}-${day} ${hours}:${minutes}`;
+          default: return `${year}-${month}-${day}`;
+        }
+      },
+      generateId() {
+        return `TX${Date.now()}${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      },
+      validateUsername(username) {
+        if (!username || username.length < 3) return { valid: false, message: '用户名至少3个字符' };
+        if (username.length > 20) return { valid: false, message: '用户名最多20个字符' };
+        if (!/^[a-zA-Z0-9_]+$/.test(username)) return { valid: false, message: '用户名只能包含字母、数字和下划线' };
+        return { valid: true, message: '' };
+      },
+      validatePassword(password) {
+        if (!password || password.length < 6) return { valid: false, strength: 'weak', message: '密码至少6个字符' };
+        if (password.length < 8) return { valid: true, strength: 'medium', message: '密码强度: 中等' };
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        if (hasLetter && hasNumber) return { valid: true, strength: 'strong', message: '密码强度: 强' };
+        return { valid: true, strength: 'medium', message: '密码强度: 中等' };
+      },
+      simpleHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash = hash & hash; }
+        return Math.abs(hash).toString(36);
+      },
+      getMonthStart() { const today = new Date(); return new Date(today.getFullYear(), today.getMonth(), 1); },
+      getTodayStart() { const today = new Date(); today.setHours(0, 0, 0, 0); return today; },
+      showToast(message, duration = 2000) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), duration);
+      },
+      storage: {
+        get(key, defaultValue = null) {
+          try { const item = localStorage.getItem(key); return item ? JSON.parse(item) : defaultValue; }
+          catch (e) { return defaultValue; }
+        },
+        set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; } },
+        remove(key) { try { localStorage.removeItem(key); return true; } catch (e) { return false; } }
+      }
+    };
+
+    // ============ Storage ============
+    const Storage = {
+      KEYS: { USER: 'light_account_user', RECORDS: 'light_account_records', CUSTOMERS: 'light_account_customers', SUPPLIERS: 'light_account_suppliers', CATEGORIES: 'light_account_categories', SETTINGS: 'light_account_settings', LAST_LOGIN: 'light_account_last_login' },
+      DEFAULT_EXPENSE_CATEGORIES: [
+        { id: 'exp_1', name: '进货成本', icon: '📦' }, { id: 'exp_2', name: '餐饮成本', icon: '🍜' },
+        { id: 'exp_3', name: '房租水电', icon: '💡' }, { id: 'exp_4', name: '员工工资', icon: '💼' },
+        { id: 'exp_5', name: '运营费用', icon: '📊' }, { id: 'exp_6', name: '交通物流', icon: '🚚' },
+        { id: 'exp_7', name: '办公用品', icon: '📎' }, { id: 'exp_8', name: '税费支出', icon: '🧾' },
+        { id: 'exp_9', name: '社交应酬', icon: '☕' }, { id: 'exp_10', name: '其他支出', icon: '✨' }
+      ],
+      DEFAULT_INCOME_CATEGORIES: [
+        { id: 'inc_1', name: '销售收入', icon: '💰' }, { id: 'inc_2', name: '服务收入', icon: '🛒' },
+        { id: 'inc_3', name: '其他收入', icon: '🎁' }
+      ],
+      init() {
+        if (!localStorage.getItem(this.KEYS.CATEGORIES)) Utils.storage.set(this.KEYS.CATEGORIES, { expense: this.DEFAULT_EXPENSE_CATEGORIES, income: this.DEFAULT_INCOME_CATEGORIES });
+        if (!localStorage.getItem(this.KEYS.SETTINGS)) Utils.storage.set(this.KEYS.SETTINGS, { currency: '¥', defaultPaymentMethod: 'wechat', theme: 'light' });
+        if (!localStorage.getItem(this.KEYS.RECORDS)) Utils.storage.set(this.KEYS.RECORDS, []);
+        if (!localStorage.getItem(this.KEYS.CUSTOMERS)) Utils.storage.set(this.KEYS.CUSTOMERS, []);
+        if (!localStorage.getItem(this.KEYS.SUPPLIERS)) Utils.storage.set(this.KEYS.SUPPLIERS, []);
+      },
+      getUser() { return Utils.storage.get(this.KEYS.USER, null); },
+      setUser(user) { return Utils.storage.set(this.KEYS.USER, user); },
+      clearUser() { return Utils.storage.remove(this.KEYS.USER); },
+      isLoggedIn() { return this.getUser() !== null; },
+      getCategories() { return Utils.storage.get(this.KEYS.CATEGORIES, { expense: this.DEFAULT_EXPENSE_CATEGORIES, income: this.DEFAULT_INCOME_CATEGORIES }); },
+      getRecords() { return Utils.storage.get(this.KEYS.RECORDS, []); },
+      setRecords(records) { return Utils.storage.set(this.KEYS.RECORDS, records); },
+      addRecord(record) { const records = this.getRecords(); records.unshift({ ...record, id: record.id || Utils.generateId(), createdAt: record.createdAt || new Date().toISOString() }); this.setRecords(records); return record; },
+      getCustomers() { return Utils.storage.get(this.KEYS.CUSTOMERS, []); },
+      getSuppliers() { return Utils.storage.get(this.KEYS.SUPPLIERS, []); },
+      getSettings() { return Utils.storage.get(this.KEYS.SETTINGS, {}); },
+      getMonthRecords() { const monthStart = Utils.getMonthStart(); return this.getRecords().filter(r => new Date(r.createdAt) >= monthStart); },
+      getStatistics() {
+        const monthRecords = this.getMonthRecords();
+        const totalIncome = monthRecords.filter(r => r.type === 'income').reduce((sum, r) => sum + parseFloat(r.amount), 0);
+        const totalExpense = monthRecords.filter(r => r.type === 'expense').reduce((sum, r) => sum + parseFloat(r.amount), 0);
+        return { totalIncome, totalExpense, balance: totalIncome - totalExpense, monthRecordCount: monthRecords.length, totalRecordCount: this.getRecords().length };
+      },
+      register(username, password, userType = 'personal') {
+        const users = Utils.storage.get(this.KEYS.LAST_LOGIN, []);
+        if (users.find(u => u.username === username)) return { success: false, message: '用户名已存在' };
+        const newUser = { id: Utils.generateId(), username, passwordHash: Utils.simpleHash(password), userType, createdAt: new Date().toISOString() };
+        users.push(newUser); Utils.storage.set(this.KEYS.LAST_LOGIN, users);
+        this.setUser({ id: newUser.id, username: newUser.username, userType: newUser.userType });
+        return { success: true, message: '注册成功' };
+      },
+      login(username, password) {
+        const users = Utils.storage.get(this.KEYS.LAST_LOGIN, []);
+        const user = users.find(u => u.username === username);
+        if (!user) return { success: false, message: '用户不存在' };
+        if (user.passwordHash !== Utils.simpleHash(password)) return { success: false, message: '密码错误' };
+        this.setUser({ id: user.id, username: user.username, userType: user.userType });
+        return { success: true, message: '登录成功' };
+      },
+      addCustomer(customer) { const customers = this.getCustomers(); const newCustomer = { ...customer, id: Utils.generateId(), createdAt: new Date().toISOString() }; customers.push(newCustomer); Utils.storage.set(this.KEYS.CUSTOMERS, customers); return newCustomer; },
+      updateCustomer(id, updates) { const customers = this.getCustomers(); const idx = customers.findIndex(c => c.id === id); if (idx !== -1) { customers[idx] = { ...customers[idx], ...updates }; Utils.storage.set(this.KEYS.CUSTOMERS, customers); return customers[idx]; } return null; },
+      deleteCustomer(id) { const customers = this.getCustomers().filter(c => c.id !== id); Utils.storage.set(this.KEYS.CUSTOMERS, customers); },
+      addSupplier(supplier) { const suppliers = this.getSuppliers(); const newSupplier = { ...supplier, id: Utils.generateId(), createdAt: new Date().toISOString() }; suppliers.push(newSupplier); Utils.storage.set(this.KEYS.SUPPLIERS, suppliers); return newSupplier; },
+      updateSupplier(id, updates) { const suppliers = this.getSuppliers(); const idx = suppliers.findIndex(s => s.id === id); if (idx !== -1) { suppliers[idx] = { ...suppliers[idx], ...updates }; Utils.storage.set(this.KEYS.SUPPLIERS, suppliers); return suppliers[idx]; } return null; },
+      deleteSupplier(id) { const suppliers = this.getSuppliers().filter(s => s.id !== id); Utils.storage.set(this.KEYS.SUPPLIERS, suppliers); },
+      exportData() { return { version: '1.0', exportDate: new Date().toISOString(), records: this.getRecords(), customers: this.getCustomers(), categories: this.getCategories(), settings: this.getSettings() }; },
+      importData(data) {
+        try { if (data.records) this.setRecords(data.records); if (data.customers) Utils.storage.set(this.KEYS.CUSTOMERS, data.customers); return { success: true, message: '数据导入成功' }; }
+        catch (e) { return { success: false, message: '数据导入失败' }; }
+      }
+    };
+    Storage.init();
+
+    // ============ Router ============
+    const Router = {
+      routes: {},
+      currentRoute: null,
+      setGuard(guard) { this.guard = guard; },
+      register(path, handler) { this.routes[path] = handler; },
+      navigate(path) { if (this.guard && !this.guard(path)) return false; window.location.hash = path; return true; },
+      getCurrentRoute() { return (window.location.hash.slice(1) || 'login').split('?')[0]; },
+      handleRoute() {
+        const path = this.getCurrentRoute();
+        if (this.guard && !this.guard(path)) return;
+        this.currentRoute = path;
+        if (this.routes[path]) this.routes[path]();
+        else { if (Storage.isLoggedIn()) this.navigate('dashboard'); else this.navigate('login'); }
+      },
+      init() { window.addEventListener('hashchange', () => this.handleRoute()); this.handleRoute(); }
+    };
+
+    // ============ App ============
+    const App = {
+      state: { currentPage: 'login' },
+
+      init() {
+        Storage.init();
+        this.registerRoutes();
+        Router.setGuard((path) => {
+          if (path === 'login' || path === 'register') { if (Storage.isLoggedIn()) { Router.navigate('dashboard'); return false; } return true; }
+          if (!Storage.isLoggedIn()) { Router.navigate('login'); return false; }
+          return true;
+        });
+        Router.init();
+      },
+
+      registerRoutes() {
+        Router.register('login', () => this.renderLoginPage());
+        Router.register('register', () => this.renderLoginPage(true));
+        Router.register('dashboard', () => this.renderDashboardPage());
+        Router.register('records', () => this.renderRecordsPage());
+        Router.register('add', () => this.renderAddPage());
+        Router.register('stats', () => this.renderStatsPage());
+        Router.register('customers', () => this.renderCustomersPage());
+        Router.register('suppliers', () => this.renderSuppliersPage());
+        Router.register('settings', () => this.renderSettingsPage());
+      },
+
+      renderLoginPage(showRegister = false) {
+        this.state.currentPage = 'login';
+        const user = Storage.getUser();
+        document.getElementById('app').innerHTML = `
+          <div class="min-h-screen bg-surface-cream flex flex-col">
+            <header class="flex items-center justify-center py-8">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">💰</span>
+                <span class="text-xl font-semibold text-primary tracking-tight">轻记账</span>
+              </div>
+            </header>
+            <main class="flex-1 flex items-center justify-center px-6">
+              <div class="w-full max-w-md">
+                <div class="card p-8 shadow-card">
+                  <div class="segmented-control mb-6">
+                    <button class="segmented-item ${!showRegister ? 'active' : ''}" onclick="App.showLogin()">账号登录</button>
+                    <button class="segmented-item ${showRegister ? 'active' : ''}" onclick="App.showRegister()">免费注册</button>
+                  </div>
+                  <div id="section-login" class="${showRegister ? 'hidden' : ''}">
+                    <div class="mb-6">
+                      <h2 class="text-xl font-bold">欢迎回来</h2>
+                      <p class="text-sm text-text-muted mt-1">输入账本通行证，即刻开始今天的财务打理</p>
+                    </div>
+                    <form id="login-form" class="space-y-4">
+                      <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">用户名</label>
+                        <div class="login-input-wrapper">
+                          <span class="material-symbols-outlined">person</span>
+                          <input type="text" id="login-username" class="input" placeholder="请输入用户名" required>
+                        </div>
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">账户密码</label>
+                        <div class="login-input-wrapper">
+                          <span class="material-symbols-outlined">lock</span>
+                          <input type="password" id="login-password" class="input" placeholder="请输入密码" required>
+                        </div>
+                      </div>
+                      <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox"><span class="text-text-secondary">7天内自动登录</span>
+                        </label>
+                        <a href="#" class="text-primary hover:underline" onclick="Utils.showToast('请联系管理员')">忘记密码？</a>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-full h-11 mt-2">登 录</button>
+                    </form>
+                  </div>
+                  <div id="section-register" class="${showRegister ? '' : 'hidden'}">
+                    <div class="mb-6">
+                      <h2 class="text-xl font-bold">创建新账本</h2>
+                      <p class="text-sm text-text-muted mt-1">注册只需半分钟，开启井井有条的财务生活</p>
+                    </div>
+                    <form id="register-form" class="space-y-4">
+                      <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">用户名</label>
+                        <div class="login-input-wrapper">
+                          <span class="material-symbols-outlined">badge</span>
+                          <input type="text" id="reg-username" class="input" placeholder="3-20位字母数字" required>
+                        </div>
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">设置密码</label>
+                        <div class="login-input-wrapper">
+                          <span class="material-symbols-outlined">lock</span>
+                          <input type="password" id="reg-password" class="input" placeholder="6-20位字符" required>
+                        </div>
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">确认密码</label>
+                        <input type="password" id="reg-confirm" class="input" placeholder="请再次输入相同密码" required>
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-2">用户类型</label>
+                        <div class="grid grid-cols-3 gap-2">
+                          <button type="button" class="user-type-btn p-3 rounded-lg bg-surface-cream text-center transition-all border-2 border-primary selected" data-type="personal">
+                            <span class="material-symbols-outlined text-xl block">person</span>
+                            <span class="text-xs mt-1 block">个人记账</span>
+                          </button>
+                          <button type="button" class="user-type-btn p-3 rounded-lg bg-surface-cream text-center transition-all border-2 border-transparent" data-type="merchant">
+                            <span class="material-symbols-outlined text-xl block">store</span>
+                            <span class="text-xs mt-1 block">个体商户</span>
+                          </button>
+                          <button type="button" class="user-type-btn p-3 rounded-lg bg-surface-cream text-center transition-all border-2 border-transparent" data-type="enterprise">
+                            <span class="material-symbols-outlined text-xl block">domain</span>
+                            <span class="text-xs mt-1 block">小微企业</span>
+                          </button>
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-full h-11 mt-2">立即注册</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        `;
+        this.bindLoginEvents();
+      },
+
+      bindLoginEvents() {
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) loginForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const result = Storage.login(document.getElementById('login-username').value, document.getElementById('login-password').value);
+          if (result.success) { Utils.showToast('登录成功'); Router.navigate('dashboard'); }
+          else Utils.showToast(result.message);
+        });
+        const registerForm = document.getElementById('register-form');
+        if (registerForm) {
+          let selectedUserType = 'personal';
+          document.querySelectorAll('.user-type-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              document.querySelectorAll('.user-type-btn').forEach(b => { b.classList.remove('selected', 'border-primary'); b.classList.add('border-transparent'); });
+              btn.classList.add('selected', 'border-primary'); btn.classList.remove('border-transparent');
+              selectedUserType = btn.dataset.type;
+            });
+          });
+          registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+            const usernameResult = Utils.validateUsername(username);
+            if (!usernameResult.valid) { Utils.showToast(usernameResult.message); return; }
+            if (password !== confirm) { Utils.showToast('两次输入的密码不一致'); return; }
+            const result = Storage.register(username, password, selectedUserType);
+            if (result.success) { Utils.showToast('注册成功'); Router.navigate('dashboard'); }
+            else Utils.showToast(result.message);
+          });
+        }
+      },
+
+      showLogin() {
+        document.querySelectorAll('.segmented-item').forEach((t, i) => t.classList.toggle('active', i === 0));
+        document.getElementById('section-login').classList.remove('hidden');
+        document.getElementById('section-register').classList.add('hidden');
+      },
+
+      showRegister() {
+        document.querySelectorAll('.segmented-item').forEach((t, i) => t.classList.toggle('active', i === 1));
+        document.getElementById('section-login').classList.add('hidden');
+        document.getElementById('section-register').classList.remove('hidden');
+      },
+
+      getAppLayout(activePage) {
+        const user = Storage.getUser();
+        const stats = Storage.getStatistics();
+        return `
+          <aside class="sidebar-nav">
+            <div class="flex items-center gap-2 mb-6">
+              <span class="text-2xl">💰</span>
+              <div class="flex flex-col">
+                <span class="font-semibold text-primary tracking-tight">轻记账</span>
+                <span class="text-xs text-text-secondary">${user?.userType === 'merchant' ? '商户财务工作台' : '个人财务管家'}</span>
+              </div>
+            </div>
+            <nav class="space-y-1 flex-1">
+              <a href="#dashboard" class="nav-item ${activePage === 'dashboard' ? 'active' : ''}"><span class="material-symbols-outlined">grid_view</span><span>首页概览</span></a>
+              <a href="#records" class="nav-item ${activePage === 'records' ? 'active' : ''}"><span class="material-symbols-outlined">receipt_long</span><span>收支明细</span></a>
+              <a href="#add" class="nav-item ${activePage === 'add' ? 'active' : ''}"><span class="material-symbols-outlined">edit_square</span><span>记一笔</span></a>
+              <a href="#stats" class="nav-item ${activePage === 'stats' ? 'active' : ''}"><span class="material-symbols-outlined">analytics</span><span>统计分析</span></a>
+              <a href="#customers" class="nav-item ${activePage === 'customers' ? 'active' : ''}"><span class="material-symbols-outlined">group</span><span>客户账本</span></a>
+              <a href="#suppliers" class="nav-item ${activePage === 'suppliers' ? 'active' : ''}"><span class="material-symbols-outlined">local_shipping</span><span>供应商</span></a>
+              <a href="#settings" class="nav-item ${activePage === 'settings' ? 'active' : ''}"><span class="material-symbols-outlined">settings</span><span>系统设置</span></a>
+            </nav>
+            <div class="card mt-auto">
+              <div class="flex items-center justify-between text-sm text-text-secondary">
+                <span>今日净收</span>
+                <span class="w-2 h-2 rounded-full bg-income-mint"></span>
+              </div>
+              <div class="flex items-baseline justify-between mt-2">
+                <span class="text-xs text-text-secondary">净结余</span>
+                <span class="amount-md text-primary font-bold">¥${stats.balance >= 0 ? '+' : ''}${stats.balance.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</span>
+              </div>
+            </div>
+          </aside>
+          <main class="main-content">
+            <header class="sticky top-0 bg-surface-cream/85 backdrop-blur z-40 px-4 py-4 mb-6 border-b border-border-soft" style="margin: -1.5rem -1.5rem 1.5rem; padding: 1rem 1.5rem;">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="relative flex-1" style="max-width: 400px;">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg text-text-muted">search</span>
+                    <input type="text" class="input pl-10" placeholder="搜索订单号、备注..." style="width: 100%;">
+                  </div>
+                  <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-cream text-sm">
+                    <span class="material-symbols-outlined text-base text-primary">calendar_today</span>
+                    <span class="text-text-secondary">${Utils.formatDate(new Date(), 'full')}</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <button class="btn btn-primary" onclick="Router.navigate('add')">
+                    <span class="material-symbols-outlined">add</span><span class="hidden md:inline">记一笔</span>
+                  </button>
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+                      <span class="text-sm font-semibold text-on-secondary-container">${user?.username?.charAt(0).toUpperCase() || 'U'}</span>
+                    </div>
+                    <span class="hidden lg:block text-sm font-semibold">${user?.username || '用户'}</span>
+                    <button onclick="App.logout(); return false;" class="btn-logout" title="退出登录">
+                      <span class="material-symbols-outlined">logout</span>
+                      <span class="hidden md:inline">退出</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </header>
+            <div id="page-content" class="page"></div>
+          </main>
+          <nav class="bottom-nav">
+            <a href="#dashboard" class="bottom-nav-item ${activePage === 'dashboard' ? 'active' : ''}"><span class="material-symbols-outlined">grid_view</span><span>首页</span></a>
+            <a href="#records" class="bottom-nav-item ${activePage === 'records' ? 'active' : ''}"><span class="material-symbols-outlined">receipt_long</span><span>明细</span></a>
+            <a href="#add" class="bottom-nav-item ${activePage === 'add' ? 'active' : ''}"><span class="material-symbols-outlined">edit_square</span><span>记账</span></a>
+            <a href="#stats" class="bottom-nav-item ${activePage === 'stats' ? 'active' : ''}"><span class="material-symbols-outlined">analytics</span><span>统计</span></a>
+            <a href="#settings" class="bottom-nav-item ${activePage === 'settings' ? 'active' : ''}"><span class="material-symbols-outlined">settings</span><span>设置</span></a>
+          </nav>
+        `;
+      },
+
+      logout() { Storage.clearUser(); Utils.showToast('已退出登录'); Router.navigate('login'); },
+
+      renderDashboardPage() {
+        this.state.currentPage = 'dashboard';
+        const stats = Storage.getStatistics();
+        const records = Storage.getRecords().slice(0, 5);
+        document.getElementById('app').innerHTML = this.getAppLayout('dashboard');
+        document.getElementById('page-content').innerHTML = `
+          <div class="container">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+              <div class="kpi-card">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm text-text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-lg text-primary">savings</span>本月净利润</span>
+                  <span class="badge ${stats.balance >= 0 ? 'badge-income' : 'badge-expense'}">${stats.balance >= 0 ? '盈利中' : '亏损中'}</span>
+                </div>
+                <div class="amount-display text-primary font-bold tracking-tight">¥${stats.balance.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div>
+              </div>
+              <div class="kpi-card">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm text-text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-lg text-income-mint">arrow_circle_down</span>本月总收入</span>
+                </div>
+                <div class="amount-display text-income-mint font-bold tracking-tight">¥${stats.totalIncome.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div>
+              </div>
+              <div class="kpi-card">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm text-text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-lg text-expense-coral">arrow_circle_up</span>本月总支出</span>
+                </div>
+                <div class="amount-display text-expense-coral font-bold tracking-tight">¥${stats.totalExpense.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div>
+              </div>
+              <div class="kpi-card" style="background: var(--color-surface-cream);">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-lg text-primary">today</span>记账笔数</span>
+                </div>
+                <div class="amount-display text-primary font-bold tracking-tight">${stats.monthRecordCount} 笔</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="card">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,107,107,0.15);"><span class="material-symbols-outlined text-2xl" style="color: var(--color-expense-coral);">shopping_cart_checkout</span></div>
+                    <div><h3 class="font-semibold">记支出</h3><p class="text-xs text-text-muted">进货 / 房租 / 物料</p></div>
+                  </div>
+                </div>
+                <button class="btn w-full text-white" style="background: var(--color-expense-coral);" onclick="Router.navigate('add?type=expense')"><span class="material-symbols-outlined">remove</span>记一笔支出</button>
+              </div>
+              <div class="card">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(126,215,193,0.2);"><span class="material-symbols-outlined text-2xl text-income-mint">point_of_sale</span></div>
+                    <div><h3 class="font-semibold">记收入</h3><p class="text-xs text-text-muted">营业收入 / 服务收费</p></div>
+                  </div>
+                </div>
+                <button class="btn btn-primary w-full" onclick="Router.navigate('add?type=income')"><span class="material-symbols-outlined">add</span>记一笔收入</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">最近记账记录</h2>
+                <a href="#records" class="text-sm text-primary hover:underline flex items-center gap-1">查看全部<span class="material-symbols-outlined text-sm">chevron_right</span></a>
+              </div>
+              <div id="recent-records">
+                ${records.length === 0 ? '<div class="empty-state"><span class="material-symbols-outlined text-4xl text-text-muted">receipt_long</span><p class="font-medium mt-4">暂无记账记录</p><p class="text-sm text-text-muted mt-1">点击下方按钮开始记账</p></div>' :
+                  records.map(r => {
+                    const isIncome = r.type === 'income';
+                    return `<div class="transaction-item">
+                      <div class="w-10 h-10 rounded-full bg-surface-cream flex items-center justify-center text-lg">${r.categoryIcon || '💰'}</div>
+                      <div class="flex-1 min-w-0"><span class="font-medium block">${r.category}</span><span class="text-xs text-text-muted">${Utils.formatDate(r.createdAt, 'datetime')}</span></div>
+                      <span class="font-semibold ${isIncome ? 'text-income-mint' : 'text-expense-coral'}">${isIncome ? '+' : '-'}¥${parseFloat(r.amount).toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</span>
+                    </div>`;
+                  }).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      renderRecordsPage() {
+        this.state.currentPage = 'records';
+        const records = Storage.getRecords();
+        const stats = Storage.getStatistics();
+        document.getElementById('app').innerHTML = this.getAppLayout('records');
+        document.getElementById('page-content').innerHTML = `
+          <div class="container">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+              <div>
+                <h1 class="text-xl font-bold">收支明细流水</h1>
+                <p class="text-sm text-text-secondary mt-1">查看与管理全部收支流水账目</p>
+              </div>
+              <button class="btn btn-primary" onclick="Router.navigate('add')"><span class="material-symbols-outlined">add</span>记一笔</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div class="kpi-card"><span class="text-sm text-text-secondary">本月累计支出</span><div class="amount-lg text-expense-coral font-bold mt-2">-¥${stats.totalExpense.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div></div>
+              <div class="kpi-card"><span class="text-sm text-text-secondary">本月累计收入</span><div class="amount-lg text-income-mint font-bold mt-2">+¥${stats.totalIncome.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div></div>
+              <div class="kpi-card"><span class="text-sm font-semibold">本期净利润</span><div class="amount-lg text-primary font-bold mt-2">¥${stats.balance.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div></div>
+            </div>
+            <div class="card">
+              <div id="records-list">
+                ${records.length === 0 ? '<div class="empty-state"><span class="material-symbols-outlined text-4xl text-text-muted">receipt_long</span><p class="font-medium mt-4">暂无收支记录</p></div>' :
+                  records.map(r => {
+                    const isIncome = r.type === 'income';
+                    return `<div class="p-4 hover:bg-surface-cream transition-colors flex items-center gap-4 cursor-pointer">
+                      <div class="w-12 h-12 rounded-full bg-surface-cream flex items-center justify-center text-xl">${r.categoryIcon || '💰'}</div>
+                      <div class="flex-1 min-w-0"><div class="font-medium">${r.category}</div><div class="text-sm text-text-muted">${r.note || '无备注'}</div></div>
+                      <div class="text-right"><div class="font-semibold ${isIncome ? 'text-income-mint' : 'text-expense-coral'}">${isIncome ? '+' : '-'}¥${parseFloat(r.amount).toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div></div>
+                    </div>`;
+                  }).join('')
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      renderAddPage() {
+        this.state.currentPage = 'add';
+        const type = (window.location.hash.split('?')[1] || '').includes('type=income') ? 'income' : 'expense';
+        const categories = Storage.getCategories();
+        const cats = categories[type] || [];
+        const channelLabels = { wechat: '💬 微信支付', alipay: '💙 支付宝', cash: '💵 现金', bank: '🏦 银行卡' };
+        document.getElementById('app').innerHTML = this.getAppLayout('add');
+        document.getElementById('page-content').innerHTML = `
+          <div class="container max-w-2xl">
+            <div class="mb-6"><h1 class="text-xl font-bold">记一笔账目</h1><p class="text-sm text-text-secondary mt-1">支持快速录入支出与营业收入</p></div>
+            <form id="add-record-form" class="space-y-6">
+              <div class="segmented-control" id="type-toggle">
+                <button type="button" class="segmented-item ${type === 'expense' ? 'active' : ''}" data-type="expense">记支出 💸</button>
+                <button type="button" class="segmented-item ${type === 'income' ? 'active' : ''}" data-type="income">记收入 💰</button>
+              </div>
+              <div class="card">
+                <div class="flex items-baseline gap-2 pb-4 border-b border-border-soft">
+                  <span id="currency-symbol" class="text-2xl font-bold ${type === 'income' ? 'text-income-mint' : 'text-expense-coral'}">¥</span>
+                  <input type="text" id="amount-input" class="flex-1 text-3xl font-bold bg-transparent outline-none" placeholder="0.00" value="0.00">
+                </div>
+                <div class="flex flex-wrap gap-2 pt-4">
+                  <span class="text-xs text-text-secondary mr-1">快捷:</span>
+                  ${[50, 100, 200, 500, 1000].map(a => `<button type="button" class="category-chip" data-amount="${a}">${a.toLocaleString()}</button>`).join('')}
+                </div>
+              </div>
+              <div class="card">
+                <div class="flex items-center justify-between mb-4"><h2 class="font-semibold">分类</h2><span class="text-sm text-text-secondary">当前: <strong class="text-primary" id="active-cat-label">${cats[0]?.name || ''}</strong></span></div>
+                <div id="category-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  ${cats.map((cat, i) => `<button type="button" class="category-btn ${i === 0 ? 'selected' : ''}" data-category="${cat.name}" data-icon="${cat.icon}" data-type="${type}">
+                    <span class="text-2xl mb-1">${cat.icon}</span><span class="text-sm font-medium">${cat.name}</span>
+                  </button>`).join('')}
+                </div>
+              </div>
+              <div class="card">
+                <h2 class="font-semibold mb-4">明细</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium mb-2">渠道</label>
+                    <select id="payment-channel" class="input">${Object.entries(channelLabels).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">备注</label>
+                    <input type="text" id="note-input" class="input" placeholder="备注信息...">
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn ${type === 'income' ? 'text-white' : 'btn-primary'}" style="${type === 'income' ? 'background: var(--color-income-mint);' : ''} width: 100%; height: 3rem; font-size: 1.125rem;"><span class="material-symbols-outlined">save</span>保存账目</button>
+            </form>
+          </div>
+        `;
+        this.bindAddPageEvents(type);
+      },
+
+      bindAddPageEvents(initialType) {
+        let currentType = initialType;
+        let currentCategory = Storage.getCategories()[initialType]?.[0]?.name || '';
+        let currentIcon = Storage.getCategories()[initialType]?.[0]?.icon || '💰';
+
+        document.querySelectorAll('#type-toggle .segmented-item').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('#type-toggle .segmented-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentType = btn.dataset.type;
+            const cats = Storage.getCategories()[currentType] || [];
+            document.getElementById('category-grid').innerHTML = cats.map((cat, i) => `<button type="button" class="category-btn ${i === 0 ? 'selected' : ''}" data-category="${cat.name}" data-icon="${cat.icon}" data-type="${currentType}"><span class="text-2xl mb-1">${cat.icon}</span><span class="text-sm font-medium">${cat.name}</span></button>`).join('');
+            document.getElementById('currency-symbol').className = `text-2xl font-bold ${currentType === 'income' ? 'text-income-mint' : 'text-expense-coral'}`;
+            if (cats[0]) { document.getElementById('active-cat-label').textContent = cats[0].name; currentCategory = cats[0].name; currentIcon = cats[0].icon; }
+            this.bindCategorySelection();
+          });
+        });
+        this.bindCategorySelection();
+        document.querySelectorAll('[data-amount]').forEach(btn => {
+          btn.addEventListener('click', () => { document.getElementById('amount-input').value = parseFloat(btn.dataset.amount).toFixed(2); });
+        });
+        document.getElementById('add-record-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const amount = parseFloat(document.getElementById('amount-input').value) || 0;
+          if (amount <= 0) { Utils.showToast('请输入有效金额'); return; }
+          Storage.addRecord({ type: currentType, amount, category: currentCategory, categoryIcon: currentIcon, channel: document.getElementById('payment-channel').value, note: document.getElementById('note-input').value, createdAt: new Date().toISOString() });
+          Utils.showToast('记账成功');
+          document.getElementById('amount-input').value = '0.00';
+          document.getElementById('note-input').value = '';
+        });
+      },
+
+      bindCategorySelection() {
+        document.querySelectorAll('.category-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.getElementById('active-cat-label').textContent = btn.dataset.category;
+          });
+        });
+      },
+
+      renderStatsPage() {
+        this.state.currentPage = 'stats';
+        const stats = Storage.getStatistics();
+        const records = Storage.getRecords();
+        const expenseByCategory = {};
+        records.filter(r => r.type === 'expense').forEach(r => { expenseByCategory[r.category] = (expenseByCategory[r.category] || 0) + parseFloat(r.amount); });
+        document.getElementById('app').innerHTML = this.getAppLayout('stats');
+        document.getElementById('page-content').innerHTML = `
+          <div class="container">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-12 h-12 rounded-lg bg-surface-cream flex items-center justify-center"><span class="material-symbols-outlined text-2xl text-primary">analytics</span></div>
+              <div><h1 class="text-xl font-bold">财务统计分析</h1><p class="text-sm text-text-secondary">多维收支诊断与经营预测</p></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+              <div class="kpi-card"><span class="text-sm text-text-secondary">本月净利润</span><div class="amount-display text-primary font-bold mt-2">¥${stats.balance.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div></div>
+              <div class="kpi-card"><span class="text-sm text-text-secondary">总营业收入</span><div class="amount-display text-income-mint font-bold mt-2">+¥${stats.totalIncome.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div></div>
+              <div class="kpi-card"><span class="text-sm text-text-secondary">本月总支出</span><div class="amount-display text-expense-coral font-bold mt-2">-¥${stats.totalExpense.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div></div>
+              <div class="kpi-card"><span class="text-sm text-text-secondary">记录总笔数</span><div class="amount-display text-primary font-bold mt-2">${stats.totalRecordCount}</div></div>
+            </div>
+            <div class="card mb-6">
+              <h2 class="font-semibold mb-4">支出分类分析</h2>
+              <div class="space-y-3">
+                ${Object.entries(expenseByCategory).length === 0 ? '<p class="text-sm text-text-muted text-center py-4">暂无数据</p>' :
+                  Object.entries(expenseByCategory).sort((a, b) => b[1] - a[1]).map(([name, amount]) => {
+                    const percent = stats.totalExpense > 0 ? ((amount / stats.totalExpense) * 100).toFixed(1) : 0;
+                    return `<div class="flex items-center gap-3">
+                      <div class="flex-1"><div class="flex justify-between text-sm mb-1"><span>${name}</span><span>¥${amount.toLocaleString()}</span></div>
+                        <div style="width: 100%; height: 0.5rem; background: var(--color-surface-cream); border-radius: 9999px; overflow: hidden;">
+                          <div style="width: ${percent}%; height: 100%; background: var(--color-expense-coral);"></div>
+                        </div>
+                      </div>
+                      <span class="text-xs text-text-muted w-12 text-right">${percent}%</span>
+                    </div>`;
+                  }).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      renderCustomersPage() {
+        this.state.currentPage = 'customers';
+        const customers = Storage.getCustomers();
+        document.getElementById('app').innerHTML = this.getAppLayout('customers');
+        document.getElementById('page-content').innerHTML = `
+          <div class="container">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+              <div><h1 class="text-xl font-bold">客户账本</h1><p class="text-sm text-text-secondary mt-1">管理客户档案与应收账款</p></div>
+              <button class="btn btn-primary" onclick="App.showAddCustomerModal()"><span class="material-symbols-outlined">person_add</span>新建客户</button>
+            </div>
+            <div class="card">
+              ${customers.length === 0 ? '<div class="empty-state"><span class="material-symbols-outlined text-4xl text-text-muted">group</span><p class="font-medium mt-4">暂无客户</p></div>' :
+                `<table class="data-table"><thead><tr><th>客户名称</th><th>联系方式</th><th>当前余额</th><th>操作</th></tr></thead><tbody>
+                  ${customers.map(c => `<tr><td><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">${c.name?.charAt(0) || '?'}</div><span class="font-medium">${c.name}</span></div></td><td>${c.phone || '-'}</td><td class="${(c.balance || 0) > 0 ? 'text-expense-coral' : 'text-income-mint'}">${(c.balance || 0) > 0 ? '+' : ''}¥${(c.balance || 0).toLocaleString()}</td><td><button class="btn btn-ghost text-sm" onclick="App.deleteCustomer('${c.id}')">删除</button></td></tr>`).join('')}
+                </tbody></table>`
+              }
+            </div>
+          </div>
+        `;
+      },
+
+      showAddCustomerModal() {
+        const modal = document.createElement('div');
+        modal.style = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        modal.innerHTML = `<div style="background:var(--color-surface-card);border-radius:var(--radius-lg);padding:1.5rem;max-width:28rem;width:100%;">
+          <h3 class="text-lg font-semibold mb-4">新建客户</h3>
+          <form class="space-y-4" id="customer-form">
+            <div><label class="block text-sm font-medium mb-1">名称</label><input type="text" id="customer-name" class="input" required></div>
+            <div><label class="block text-sm font-medium mb-1">电话</label><input type="tel" id="customer-phone" class="input"></div>
+            <div><label class="block text-sm font-medium mb-1">余额</label><input type="number" id="customer-balance" class="input" value="0"></div>
+            <div class="flex gap-3 justify-end pt-2"><button type="button" class="btn btn-ghost" onclick="this.closest('[style]').remove()">取消</button><button type="submit" class="btn btn-primary">保存</button></div>
+          </form>
+        </div>`;
+        document.body.appendChild(modal);
+        modal.querySelector('form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          Storage.addCustomer({ name: document.getElementById('customer-name').value, phone: document.getElementById('customer-phone').value, balance: parseFloat(document.getElementById('customer-balance').value) || 0 });
+          Utils.showToast('保存成功'); modal.remove(); Router.navigate('customers');
+        });
+      },
+
+      deleteCustomer(id) { if (confirm('确定删除？')) { Storage.deleteCustomer(id); Utils.showToast('已删除'); Router.navigate('customers'); } },
+
+      renderSuppliersPage() {
+        this.state.currentPage = 'suppliers';
+        const suppliers = Storage.getSuppliers();
+        document.getElementById('app').innerHTML = this.getAppLayout('suppliers');
+        document.getElementById('page-content').innerHTML = `
+          <div class="container">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+              <div><h1 class="text-xl font-bold">供应商管理</h1><p class="text-sm text-text-secondary mt-1">管理供应商档案与采购对账</p></div>
+              <button class="btn btn-primary" onclick="App.showAddSupplierModal()"><span class="material-symbols-outlined">add_business</span>新建供应商</button>
+            </div>
+            <div class="card">
+              ${suppliers.length === 0 ? '<div class="empty-state"><span class="material-symbols-outlined text-4xl text-text-muted">local_shipping</span><p class="font-medium mt-4">暂无供应商</p></div>' :
+                `<table class="data-table"><thead><tr><th>供应商名称</th><th>联系方式</th><th>主营商品</th><th>当前余额</th><th>操作</th></tr></thead><tbody>
+                  ${suppliers.map(s => `<tr><td><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">${s.name?.charAt(0) || '?'}</div><span class="font-medium">${s.name}</span></div></td><td>${s.phone || '-'}</td><td>${s.products || '-'}</td><td>¥${(s.balance || 0).toLocaleString()}</td><td><button class="btn btn-ghost text-sm" onclick="App.deleteSupplier('${s.id}')">删除</button></td></tr>`).join('')}
+                </tbody></table>`
+              }
+            </div>
+          </div>
+        `;
+      },
+
+      showAddSupplierModal() {
+        const modal = document.createElement('div');
+        modal.style = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        modal.innerHTML = `<div style="background:var(--color-surface-card);border-radius:var(--radius-lg);padding:1.5rem;max-width:28rem;width:100%;">
+          <h3 class="text-lg font-semibold mb-4">新建供应商</h3>
+          <form class="space-y-4" id="supplier-form">
+            <div><label class="block text-sm font-medium mb-1">名称</label><input type="text" id="supplier-name" class="input" required></div>
+            <div><label class="block text-sm font-medium mb-1">电话</label><input type="tel" id="supplier-phone" class="input"></div>
+            <div><label class="block text-sm font-medium mb-1">主营商品</label><input type="text" id="supplier-products" class="input"></div>
+            <div><label class="block text-sm font-medium mb-1">余额</label><input type="number" id="supplier-balance" class="input" value="0"></div>
+            <div class="flex gap-3 justify-end pt-2"><button type="button" class="btn btn-ghost" onclick="this.closest('[style]').remove()">取消</button><button type="submit" class="btn btn-primary">保存</button></div>
+          </form>
+        </div>`;
+        document.body.appendChild(modal);
+        modal.querySelector('form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          Storage.addSupplier({ name: document.getElementById('supplier-name').value, phone: document.getElementById('supplier-phone').value, products: document.getElementById('supplier-products').value, balance: parseFloat(document.getElementById('supplier-balance').value) || 0 });
+          Utils.showToast('保存成功'); modal.remove(); Router.navigate('suppliers');
+        });
+      },
+
+      deleteSupplier(id) { if (confirm('确定删除？')) { Storage.deleteSupplier(id); Utils.showToast('已删除'); Router.navigate('suppliers'); } },
+
+      renderSettingsPage() {
+        this.state.currentPage = 'settings';
+        const settings = Storage.getSettings();
+        const user = Storage.getUser();
+        document.getElementById('app').innerHTML = this.getAppLayout('settings');
+        document.getElementById('page-content').innerHTML = `
+          <div class="container">
+            <div class="flex items-center justify-between mb-6">
+              <h1 class="text-xl font-bold">系统设置</h1>
+            </div>
+            <div class="card mb-6">
+              <h2 class="font-semibold mb-4">基本信息</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="block text-sm font-medium mb-1">店铺名称</label><input type="text" id="setting-shop-name" class="input" value="${settings.shopName || ''}"></div>
+                <div><label class="block text-sm font-medium mb-1">联系手机</label><input type="tel" id="setting-phone" class="input" value="${settings.phone || ''}"></div>
+              </div>
+            </div>
+            <div class="card mb-6">
+              <h2 class="font-semibold mb-4">账户信息</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="block text-sm font-medium mb-1">用户名</label><div class="input bg-surface-cream">${user?.username || '未登录'}</div></div>
+                <div><label class="block text-sm font-medium mb-1">账户类型</label><div class="input bg-surface-cream">${user?.userType === 'merchant' ? '个体商户' : user?.userType === 'enterprise' ? '小微企业' : '个人'}</div></div>
+              </div>
+            </div>
+            <div class="card">
+              <h2 class="font-semibold mb-4">数据管理</h2>
+              <div class="flex gap-3">
+                <button class="btn btn-secondary" onclick="App.exportData()"><span class="material-symbols-outlined">download</span>导出数据</button>
+                <label class="btn btn-secondary cursor-pointer"><span class="material-symbols-outlined">upload</span>导入数据<input type="file" accept=".json" class="hidden" onchange="App.importData(this)"></label>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      exportData() {
+        const data = Storage.exportData();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `轻记账备份_${Utils.formatDate(new Date(), 'date')}.json`; a.click();
+        Utils.showToast('数据导出成功');
+      },
+
+      importData(input) {
+        const file = input.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try { const data = JSON.parse(e.target.result); const result = Storage.importData(data); Utils.showToast(result.message); if (result.success) Router.navigate('dashboard'); }
+          catch { Utils.showToast('文件格式错误'); }
+        };
+        reader.readAsText(file);
+      }
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
+</body>
+</html>
