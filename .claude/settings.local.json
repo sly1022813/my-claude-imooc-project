@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(ls -la \"d:/claude-video-coding/\")",
-      "Read(//d/claude-video-coding/**)"
+      "Read(//d/claude-video-coding/**)",
+      "Bash(ls -la \"d:/claude-video-coding/mcp-tools/\" 2>&1)",
+      "Read(//d/claude-video-coding/mcp-tools/**)",
+      "Bash(unzip -o github-mcp-server_Windows_x86_64.zip)",
+      "Read(//c/Users/Administrator/**)",
+      "Bash(\"d:/claude-video-coding/mcp-tools/github-mcp-server.exe\" --help)",
+      "Bash(git push *)"
     ]
   }
 }
