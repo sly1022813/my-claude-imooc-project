@@ -1,0 +1,96 @@
+CREATE DATABASE IF NOT EXISTS light_accounting CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE light_accounting;
+
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS suppliers;
+DROP TABLE IF EXISTS login_logs;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    nickname VARCHAR(100),
+    phone VARCHAR(20),
+    user_type TINYINT DEFAULT 1,
+    status TINYINT DEFAULT 1,
+    last_login_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE login_logs (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    ip_address VARCHAR(45),
+    user_agent VARCHAR(500),
+    login_status TINYINT DEFAULT 1,
+    fail_reason VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    type TINYINT NOT NULL,
+    icon VARCHAR(10) DEFAULT '💰',
+    color VARCHAR(20) DEFAULT '#FF6B6B',
+    sort_order INT DEFAULT 0,
+    is_system TINYINT DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    transaction_no VARCHAR(20) NOT NULL UNIQUE,
+    type TINYINT NOT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    category_id INT NOT NULL,
+    date DATE NOT NULL,
+    time TIME DEFAULT CURRENT_TIME,
+    payment_method TINYINT,
+    counterparty VARCHAR(100),
+    counterparty_type TINYINT,
+    counterparty_id INT,
+    status TINYINT DEFAULT 1,
+    remark VARCHAR(500),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE customers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    address VARCHAR(255),
+    customer_type TINYINT,
+    credit_limit DECIMAL(12,2) DEFAULT 0,
+    outstanding_amount DECIMAL(12,2) DEFAULT 0,
+    remark VARCHAR(500),
+    status TINYINT DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE suppliers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    address VARCHAR(255),
+    contact_person VARCHAR(50),
+    products VARCHAR(255),
+    settlement_type TINYINT,
+    outstanding_amount DECIMAL(12,2) DEFAULT 0,
+    remark VARCHAR(500),
+    status TINYINT DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+SHOW TABLES;
