@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "error": "#ba1a1a", "expense-coral": "#FF6B6B", "outline": "#877275", "on-surface-variant": "#544245", "surface-container": "#f0eded", "on-secondary-container": "#7a4151", "surface-bright": "#fbf9f8", "inverse-primary": "#ffb1c2", "tertiary-fixed": "#ffd9e1", "text-secondary": "#666666", "surface-tint": "#9b3f5a", "surface-container-low": "#f6f3f2", "secondary": "#884c5d", "inverse-surface": "#303030", "surface-variant": "#e4e2e1", "surface-dim": "dcd9d9", "tertiary": "#ac2a5d", "error-container": "#ffdad6", "on-secondary-fixed": "#370a1b", "on-background": "#1b1c1c", "primary-container": "#ff8fab", "surface-container-lowest": "#ffffff", "secondary-fixed": "#ffd9e1", "surface-container-highest": "#e4e2e1", "on-secondary": "#ffffff", "primary-fixed": "#ffd9e0", "on-tertiary-fixed": "#3f001b", "text-muted": "#999999", "surface-card": "#FFFFFF", "primary": "#9b3f5a", "pending-amber": "#FFB347", "on-tertiary": "#ffffff", "background": "#fbf9f8", "income-mint": "#7ED7C1", "primary-fixed-dim": "#ffb1c2", "on-primary-container": "#79243f", "on-surface": "#1b1c1c", "surface-container-high": "#eae8e7", "surface": "#fbf9f8", "on-primary-fixed-variant": "#7d2742", "surface-cream": "#FFF5F7", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#8c0a46", "tertiary-fixed-dim": "#ffb1c5", "outline-variant": "#dac0c4", "on-error-container": "#93000a", "on-primary-fixed": "#3f0018", "on-secondary-fixed-variant": "#6c3546", "on-tertiary-container": "#870442", "secondary-fixed-dim": "#fdb2c5", "on-primary": "#ffffff", "secondary-container": "#fdb2c5", "border-soft": "#FFE4E8", "tertiary-container": "#ff8eb0", "inverse-on-surface": "#f3f0f0" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "1rem", "space-sm": "0.5rem", "space-xl": "1.5rem", "space-md": "0.75rem", "gutter": "0.75rem", "space-xs": "0.25rem", "space-lg": "1rem" }, "fontFamily": { "headline-lg": ["Plus Jakarta Sans"], "amount-sm": ["Space Mono"], "amount-display": ["Space Mono"], "body-md": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "caption-sm": ["Plus Jakarta Sans"], "amount-md": ["Space Mono"], "headline-md": ["Plus Jakarta Sans"], "amount-lg": ["Space Mono"] }, "fontSize": { "headline-lg": ["22px", { "lineHeight": "30px", "fontWeight": "700" }], "amount-sm": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "amount-display": ["32px", { "lineHeight": "38px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-xl": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "headline-sm": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "caption-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "amount-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "headline-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "amount-lg": ["22px", { "lineHeight": "28px", "fontWeight": "700" }] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 bottom-0 w-64 bg-surface-cream z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center gap-space-sm"><img alt="Brand logo. - Primary color: #ff8fab
+- Font: plusJakartaSans
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Vfi2ce36ixF5XLBKECgz06f_DMrPbOsF8Znznc2wllraadxqBUPJBtsX94XpP13-6LSeTNulpoEVdrhlmFU33zAslPiIKLnzNQRYoh2LeEYsMAvyv9ycguJv-1G7ENp_FgtnUrQh55VXB8wOZcern2gJ86T6mQh7LwhYsR8pO1o4Q2pR6mVm9NwCSsFG1qJ77gIS_-4C3u3keA3T8eyEkNFgjC2PhuDqOUp7Jrx1KBfEWEYMQ4zgMcM4k"/><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-primary leading-none">轻记账</span><span class="font-caption-sm text-caption-sm text-text-secondary mt-space-xs">商户财务工作台</span></div></div><div class="px-space-md py-space-sm"><nav class="space-y-space-xs" data-active-classes="bg-secondary-container text-on-secondary-container font-semibold rounded-xl"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-md text-body-md">首页概览</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="records" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span class="font-body-md text-body-md">收支明细</span></a><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-sm transition-all bg-secondary-container text-on-secondary-container font-semibold rounded-xl" data-path="new-transaction" href="#"><span class="material-symbols-outlined text-[20px]">edit_square</span><span class="font-body-md text-body-md">记一笔</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="statistics" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span><span class="font-body-md text-body-md">统计分析</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="customers" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span class="font-body-md text-body-md">客户账本</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-md text-body-md">系统设置</span></a></nav></div></div><div class="p-space-md m-space-md rounded-xl bg-surface-card shadow-[0_4px_16px_-2px_rgba(255,143,171,0.12)] flex flex-col gap-space-sm"><div class="flex items-center justify-between"><span class="font-caption-sm text-caption-sm text-text-secondary">今日收支状态</span><span class="flex h-2 w-2 rounded-full bg-income-mint"></span></div><div class="flex items-baseline justify-between"><span class="font-caption-sm text-caption-sm text-on-surface-variant">净结余</span><span class="font-amount-md text-amount-md text-primary font-bold">+¥3,842.00</span></div><div class="w-full bg-surface-cream h-1.5 rounded-full overflow-hidden"><div class="bg-primary h-full w-3/4 rounded-full"></div></div></div></aside><div class="pl-64 flex flex-col min-h-screen"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/85 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex items-center justify-between px-space-xl"><div class="flex items-center gap-space-lg flex-1 max-w-lg"><div class="relative w-full"><span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-[20px] text-text-muted">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-xl bg-surface-card font-body-md text-body-md text-on-surface placeholder:text-text-muted outline-none focus:ring-2 focus:ring-primary-container transition-all shadow-[0_1px_4px_rgba(0,0,0,0.02)]" placeholder="搜索订单号、备注、客户或金额..." type="text"/></div><div class="hidden xl:flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-cream text-on-surface-variant font-caption-sm text-caption-sm whitespace-nowrap"><span class="material-symbols-outlined text-[16px] text-primary">calendar_today</span><span>2025年05月20日 星期二</span></div></div><div class="flex items-center gap-space-lg"><div class="hidden md:flex items-center gap-space-xs bg-surface-card px-space-md py-1.5 rounded-full shadow-[0_1px_4px_rgba(255,143,171,0.08)] cursor-pointer hover:bg-surface-cream transition-colors"><span class="material-symbols-outlined text-[18px] text-primary">storefront</span><span class="font-body-md text-body-md font-semibold text-on-surface">林老板的便利小店</span><span class="px-space-xs py-0.5 rounded text-[11px] bg-secondary-container text-on-secondary-container font-medium">商户模式</span></div><a class="flex items-center gap-space-xs px-space-lg py-2 rounded-xl bg-primary text-on-primary font-headline-sm text-headline-sm shadow-[0_4px_16px_-2px_rgba(255,143,171,0.25)] hover:opacity-95 active:scale-95 transition-all" data-path="new-transaction" href="#"><span class="material-symbols-outlined text-[18px]">add</span><span>记一笔</span></a><button class="relative p-2 rounded-xl text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-expense-coral ring-2 ring-surface"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-container" src="https://lh3.googleusercontent.com/aida/AEtjO1U2uMOdIR7HT9r_wCEQohNvA6Mhb3u-PyCI3gfEn0Dk7MHVbiAV_qmd_APjvlcBtr96RGEyTBwkDBt_w21EHJZzjAeljZkKEGeJiMRe3o3eUFbYSZ-ENUAkl9w0zvWam9q0-p8wTVFWjawcJxuzTHqzLj_21QDn2vlLXCgy_YUB0ExgV7ZnP0hXihlg0spB8Mz-y55aIdZ3GqZuR7RXs_3x3SkJSLwc9fP5A01gQlLZ5U0_uQjKhABk1QW1"/><div class="hidden lg:flex flex-col text-left"><span class="font-headline-sm text-headline-sm text-on-surface leading-tight">林舒晴</span><span class="font-caption-sm text-caption-sm text-text-secondary leading-none">主理人</span></div></div></div></header><main class="w-full pt-16 flex-1 bg-surface px-space-xl pb-space-xl"><div class="flex flex-col w-full">
+<div class="flex flex-col gap-space-lg">
+<!-- Header Block & Segment Toggle -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-sm mb-1">
+<span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-caption-sm text-caption-sm font-semibold tracking-wider uppercase">Quick Ledger</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="font-caption-sm text-caption-sm text-text-secondary">流水号 #TK-20250929-018</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">记一笔账目</h1>
+<p class="font-body-md text-body-md text-text-secondary mt-0.5">支持快速录入支出与营业收入，关联供应商或客户订单</p>
+</div>
+<!-- Segmented Mode Control -->
+<div class="flex items-center p-1 bg-surface-container-high rounded-full shadow-inner self-start md:self-auto">
+<button class="flex items-center gap-space-xs px-space-lg py-2 rounded-full font-headline-sm text-headline-sm transition-all duration-150 bg-surface-card text-expense-coral shadow-sm" id="tab-expense">
+<span class="material-symbols-outlined text-[18px]">trending_down</span>
+<span>记支出 💸</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-lg py-2 rounded-full font-headline-sm text-headline-sm transition-all duration-150 text-text-secondary hover:text-on-surface" id="tab-income">
+<span class="material-symbols-outlined text-[18px]">trending_up</span>
+<span>记收入 💰</span>
+</button>
+</div>
+</div>
+<!-- Main Workspace Split Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- Left Column: Form & Detailed Inputs (7/12 cols ~58-60%) -->
+<div class="lg:col-span-7 flex flex-col gap-space-lg">
+<!-- Big Amount Card -->
+<div class="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="px-2 py-0.5 rounded-md bg-surface-cream text-primary font-caption-sm text-caption-sm font-semibold">经营支出款项</span>
+<span class="px-2 py-0.5 rounded-md bg-surface-container-low text-text-secondary font-caption-sm text-caption-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-income-mint">lock</span>
+                本地数据安全持久化
+              </span>
+</div>
+<button class="font-caption-sm text-caption-sm text-text-muted hover:text-expense-coral transition-colors flex items-center gap-0.5" id="clear-input-btn">
+<span class="material-symbols-outlined text-[15px]">backspace</span> 清空
+            </button>
+</div>
+<!-- Currency Input Anchor -->
+<div class="flex items-baseline gap-space-sm pb-space-xs">
+<span class="font-headline-xl text-headline-xl font-bold text-expense-coral" id="currency-symbol">¥</span>
+<input autofocus="" class="w-full font-amount-display text-amount-display text-on-surface bg-transparent outline-none tracking-tight placeholder:text-text-muted" id="amount-input" placeholder="0.00" type="text" value="168.00"/>
+</div>
+<!-- Quick Amount Pill Buttons -->
+<div class="flex flex-wrap items-center gap-space-sm pt-space-xs">
+<span class="font-caption-sm text-caption-sm text-text-secondary mr-1">快捷面额:</span>
+<button class="amount-pill px-space-md py-1 rounded-full bg-surface-cream text-secondary font-amount-sm text-amount-sm hover:bg-secondary-container hover:text-on-secondary-container transition-all" data-value="50">50</button>
+<button class="amount-pill px-space-md py-1 rounded-full bg-surface-cream text-secondary font-amount-sm text-amount-sm hover:bg-secondary-container hover:text-on-secondary-container transition-all" data-value="100">100</button>
+<button class="amount-pill px-space-md py-1 rounded-full bg-surface-cream text-secondary font-amount-sm text-amount-sm hover:bg-secondary-container hover:text-on-secondary-container transition-all" data-value="200">200</button>
+<button class="amount-pill px-space-md py-1 rounded-full bg-surface-cream text-secondary font-amount-sm text-amount-sm hover:bg-secondary-container hover:text-on-secondary-container transition-all" data-value="500">500</button>
+<button class="amount-pill px-space-md py-1 rounded-full bg-surface-cream text-secondary font-amount-sm text-amount-sm hover:bg-secondary-container hover:text-on-secondary-container transition-all" data-value="1000">1,000</button>
+<button class="amount-pill px-space-md py-1 rounded-full bg-surface-cream text-secondary font-amount-sm text-amount-sm hover:bg-secondary-container hover:text-on-secondary-container transition-all" data-value="2000">2,000</button>
+</div>
+</div>
+<!-- Category Grid Selector -->
+<div class="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">记账分类选择</h2>
+<span class="font-caption-sm text-caption-sm text-text-secondary">当前分类: <strong class="text-primary font-semibold" id="active-cat-label">进货成本</strong></span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-space-sm" id="category-grid">
+<button class="category-chip selected flex flex-col items-center justify-center p-space-md rounded-xl bg-secondary-container text-on-secondary-container shadow-sm transition-all" data-name="进货成本">
+<span class="text-2xl mb-1">📦</span>
+<span class="font-body-md text-body-md font-semibold">进货成本</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="餐饮成本">
+<span class="text-2xl mb-1">🍜</span>
+<span class="font-body-md text-body-md">餐饮成本</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="房租水电">
+<span class="text-2xl mb-1">💡</span>
+<span class="font-body-md text-body-md">房租水电</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="员工工资">
+<span class="text-2xl mb-1">💼</span>
+<span class="font-body-md text-body-md">员工工资</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="运营费用">
+<span class="text-2xl mb-1">📊</span>
+<span class="font-body-md text-body-md">运营费用</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="交通物流">
+<span class="text-2xl mb-1">🚚</span>
+<span class="font-body-md text-body-md">交通物流</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="办公用品">
+<span class="text-2xl mb-1">📎</span>
+<span class="font-body-md text-body-md">办公用品</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="税费支出">
+<span class="text-2xl mb-1">🧾</span>
+<span class="font-body-md text-body-md">税费支出</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="社交应酬">
+<span class="text-2xl mb-1">☕</span>
+<span class="font-body-md text-body-md">社交应酬</span>
+</button>
+<button class="category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all" data-name="其他支出">
+<span class="text-2xl mb-1">✨</span>
+<span class="font-body-md text-body-md">其他支出</span>
+</button>
+</div>
+</div>
+<!-- Metadata Attributes 2-Column Section -->
+<div class="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col gap-space-lg">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">明细账目属性</h2>
+<span class="font-caption-sm text-caption-sm text-text-secondary">记账凭证完整度: 95%</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<!-- Transaction Date Selector -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-caption-sm text-caption-sm font-semibold text-on-surface-variant">入账日期</label>
+<div class="flex items-center gap-space-xs bg-surface-cream rounded-xl p-1">
+<button class="date-chip flex-1 py-1.5 rounded-lg bg-surface-card text-primary font-caption-sm text-caption-sm font-semibold shadow-xs">今天 (09-29)</button>
+<button class="date-chip flex-1 py-1.5 rounded-lg text-text-secondary font-caption-sm text-caption-sm hover:text-on-surface">昨天</button>
+<button class="date-chip px-space-sm py-1.5 rounded-lg text-text-secondary hover:text-primary flex items-center justify-center" title="自定义日期">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+</button>
+</div>
+</div>
+<!-- Payment Channel -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-caption-sm text-caption-sm font-semibold text-on-surface-variant">收付渠道</label>
+<div class="flex items-center gap-space-xs bg-surface-cream rounded-xl p-1">
+<button class="channel-chip flex-1 py-1.5 rounded-lg bg-surface-card text-primary font-caption-sm text-caption-sm font-semibold shadow-xs">微信支付</button>
+<button class="channel-chip flex-1 py-1.5 rounded-lg text-text-secondary font-caption-sm text-caption-sm hover:text-on-surface">支付宝</button>
+<button class="channel-chip flex-1 py-1.5 rounded-lg text-text-secondary font-caption-sm text-caption-sm hover:text-on-surface">现金</button>
+<button class="channel-chip flex-1 py-1.5 rounded-lg text-text-secondary font-caption-sm text-caption-sm hover:text-on-surface">银行卡</button>
+</div>
+</div>
+<!-- Supplier / Counterparty -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-caption-sm text-caption-sm font-semibold text-on-surface-variant">对方单位 / 供应商</label>
+<div class="relative">
+<input class="w-full h-11 px-space-md rounded-xl bg-surface-cream font-body-md text-body-md text-on-surface outline-none focus:bg-surface-card focus:shadow-sm transition-all" id="supplier-input" placeholder="输入或选择往来对象..." type="text" value="杭州佳味食品原物料仓"/>
+<span class="material-symbols-outlined absolute right-space-md top-1/2 -translate-y-1/2 text-[18px] text-text-muted">store</span>
+</div>
+<div class="flex items-center gap-space-xs flex-wrap mt-0.5">
+<span class="font-caption-sm text-caption-sm text-text-muted">常用:</span>
+<span class="supplier-pill font-caption-sm text-caption-sm px-2 py-0.5 rounded bg-surface-container-low text-secondary cursor-pointer hover:bg-secondary-container transition-colors">三鲜农副批发部</span>
+<span class="supplier-pill font-caption-sm text-caption-sm px-2 py-0.5 rounded bg-surface-container-low text-secondary cursor-pointer hover:bg-secondary-container transition-colors">恒泰包装耗材</span>
+</div>
+</div>
+<!-- Associated Order / Account -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-caption-sm text-caption-sm font-semibold text-on-surface-variant">关联业务 / 订单号</label>
+<div class="relative">
+<input class="w-full h-11 px-space-md rounded-xl bg-surface-cream font-body-md text-body-md text-on-surface outline-none focus:bg-surface-card focus:shadow-sm transition-all" placeholder="可选关联采购单或应付单号..." type="text" value="PO-20250929-B04"/>
+<span class="material-symbols-outlined absolute right-space-md top-1/2 -translate-y-1/2 text-[18px] text-text-muted">link</span>
+</div>
+<span class="font-caption-sm text-caption-sm text-income-mint flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 已自动匹配未付采购订单
+              </span>
+</div>
+</div>
+<!-- Note Field -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-caption-sm text-caption-sm font-semibold text-on-surface-variant">备注说明</label>
+<textarea class="w-full p-space-md rounded-xl bg-surface-cream font-body-md text-body-md text-on-surface outline-none focus:bg-surface-card focus:shadow-sm transition-all resize-none" id="note-input" placeholder="写点备忘，如物品清单、规格或经手人..." rows="2">秋季新品原物料首期批量采购（含冷链运费）</textarea>
+</div>
+<!-- Drag and Drop Receipt Voucher -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-caption-sm text-caption-sm font-semibold text-on-surface-variant">上传票据凭证</label>
+<div class="flex items-center gap-space-md p-space-md bg-surface-cream rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-16 h-16 rounded-lg bg-surface-card flex items-center justify-center text-primary group-hover:scale-105 transition-transform shadow-xs overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A macro photo of an authentic paper VAT tax receipt invoice with soft crimson seal stamp on a bright wooden countertop, clean Japanese store aesthetic, warm natural daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnfNeYDNMCCnYJ7kONQq_6LOzm8O9qcf1ZQmbb9GD0oCfSk-3gtHHS63Y9o1QDLFP4VnsU2sE1UhvsBvqDCxJ0ly5_vPdkjJatH7ZVS-zmI4HAUY9ETxxPOEmUn7qzFVkma5NPEMNA9BLEibFOMkdeXBbKVL_PABHIJjDwq_3MOZxVLMbzPhjVSsOWxc5XtDfXH5p9DbroKYUksOTfxdQHCVi6ofuTY9292FfMaRRXxDHDFMQcGvC1Ww"/>
+</div>
+<div class="flex flex-col flex-1">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md font-semibold text-on-surface">发票凭证_20250929_1102.jpg</span>
+<span class="font-caption-sm text-caption-sm text-income-mint flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">task_alt</span> OCR已识别
+                  </span>
+</div>
+<span class="font-caption-sm text-caption-sm text-text-secondary mt-0.5">拖拽或点击替换凭证，支持 JPG、PNG、PDF (最大 10MB)</span>
+</div>
+<span class="material-symbols-outlined text-[20px] text-text-muted group-hover:text-primary transition-colors">cloud_upload</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Interactive Keypad, Live Preview & Actions (5/12 cols ~40-42%) -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg sticky top-20">
+<!-- Live Preview Ledger Card -->
+<div class="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">visibility</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">实时账目预览</span>
+</div>
+<span class="px-space-xs py-0.5 rounded text-[11px] bg-secondary-container text-on-secondary-container font-medium">即时同步</span>
+</div>
+<!-- Dynamic Mini Ledger Receipt Ticket -->
+<div class="bg-surface-cream rounded-xl p-space-md flex flex-col gap-space-sm relative">
+<div class="flex justify-between items-baseline">
+<span class="font-body-md text-body-md font-bold text-on-surface flex items-center gap-1" id="preview-category">
+<span>📦</span> 进货成本
+              </span>
+<span class="font-amount-lg text-amount-lg text-expense-coral font-bold" id="preview-amount">-¥168.00</span>
+</div>
+<div class="flex items-center justify-between font-caption-sm text-caption-sm text-text-secondary">
+<span id="preview-supplier">杭州佳味食品原物料仓</span>
+<span id="preview-channel">微信支付</span>
+</div>
+<p class="font-caption-sm text-caption-sm text-text-secondary truncate mt-1" id="preview-note">秋季新品原物料首期批量采购（含冷链运费）</p>
+<!-- Real-time Balance Simulation -->
+<div class="pt-space-sm mt-space-xs bg-surface-card rounded-lg p-space-sm flex items-center justify-between shadow-xs">
+<div class="flex flex-col">
+<span class="font-caption-sm text-caption-sm text-text-secondary">记账后本月利润预测</span>
+<span class="font-caption-sm text-caption-sm text-on-surface-variant font-medium">从 ¥24,800.00 变动至</span>
+</div>
+<span class="font-amount-md text-amount-md text-primary font-bold" id="preview-balance">¥24,632.00</span>
+</div>
+</div>
+</div>
+<!-- Desktop Quick Calculation Keypad (Cashier / Desk layout) -->
+<div class="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">快捷数字键盘</span>
+<span class="font-caption-sm text-caption-sm text-text-muted">支持小键盘物理输入</span>
+</div>
+<!-- Keypad Grid 4x4 -->
+<div class="grid grid-cols-4 gap-2" id="keypad">
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="7">7</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="8">8</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="9">9</button>
+<button class="key-btn h-12 rounded-xl bg-surface-container hover:bg-primary-container hover:text-on-primary-container font-headline-md text-headline-md font-bold text-secondary transition-all active:scale-95 flex items-center justify-center" data-key="/">÷</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="4">4</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="5">5</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="6">6</button>
+<button class="key-btn h-12 rounded-xl bg-surface-container hover:bg-primary-container hover:text-on-primary-container font-headline-md text-headline-md font-bold text-secondary transition-all active:scale-95 flex items-center justify-center" data-key="*">×</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="1">1</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="2">2</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="3">3</button>
+<button class="key-btn h-12 rounded-xl bg-surface-container hover:bg-primary-container hover:text-on-primary-container font-headline-md text-headline-md font-bold text-secondary transition-all active:scale-95 flex items-center justify-center" data-key="-">-</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key=".">.</button>
+<button class="key-btn h-12 rounded-xl bg-surface-cream hover:bg-secondary-container hover:text-on-secondary-container font-amount-md text-amount-md font-bold text-on-surface transition-all active:scale-95 flex items-center justify-center" data-key="0">0</button>
+<button class="key-btn h-12 rounded-xl bg-error-container text-error hover:opacity-90 font-amount-md text-amount-md font-bold transition-all active:scale-95 flex items-center justify-center" data-key="C">C</button>
+<button class="key-btn h-12 rounded-xl bg-surface-container hover:bg-primary-container hover:text-on-primary-container font-headline-md text-headline-md font-bold text-secondary transition-all active:scale-95 flex items-center justify-center" data-key="+">+</button>
+</div>
+<!-- Key Action Bar -->
+<div class="flex flex-col gap-space-sm pt-space-xs">
+<button class="w-full h-12 rounded-xl bg-primary text-on-primary font-headline-md text-headline-md flex items-center justify-center gap-space-sm shadow-md hover:opacity-95 active:scale-98 transition-all" id="save-primary-btn">
+<span class="material-symbols-outlined text-[20px]">save</span>
+<span id="save-btn-text">保存支出 (¥168.00)</span>
+</button>
+<button class="w-full h-10 rounded-xl bg-secondary-container text-on-secondary-container font-headline-sm text-headline-sm flex items-center justify-center gap-space-xs hover:bg-primary-container transition-all" id="save-continue-btn">
+<span class="material-symbols-outlined text-[18px]">playlist_add</span>
+<span>保存并记下一笔 (Alt+S)</span>
+</button>
+</div>
+</div>
+<!-- Today's Quick History Stream -->
+<div class="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">history</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">今日已记流水 (4笔)</h3>
+</div>
+<a class="font-caption-sm text-caption-sm text-primary hover:underline" href="#">查看全部</a>
+</div>
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between p-space-sm rounded-lg hover:bg-surface-cream transition-colors">
+<div class="flex items-center gap-space-sm">
+<span class="w-8 h-8 rounded-full bg-surface-cream flex items-center justify-center text-sm">🧃</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium text-on-surface leading-tight">客订鲜榨果汁×6</span>
+<span class="font-caption-sm text-caption-sm text-text-muted leading-tight">10:45 · 扫码收款</span>
+</div>
+</div>
+<span class="font-amount-md text-amount-md font-semibold text-income-mint">+¥78.00</span>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg hover:bg-surface-cream transition-colors">
+<div class="flex items-center gap-space-sm">
+<span class="w-8 h-8 rounded-full bg-surface-cream flex items-center justify-center text-sm">📦</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium text-on-surface leading-tight">降解打包纸袋500个</span>
+<span class="font-caption-sm text-caption-sm text-text-muted leading-tight">09:30 · 恒泰包装耗材</span>
+</div>
+</div>
+<span class="font-amount-md text-amount-md font-semibold text-expense-coral">-¥210.00</span>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg hover:bg-surface-cream transition-colors">
+<div class="flex items-center gap-space-sm">
+<span class="w-8 h-8 rounded-full bg-surface-cream flex items-center justify-center text-sm">💰</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium text-on-surface leading-tight">会员充值卡 500面额</span>
+<span class="font-caption-sm text-caption-sm text-text-muted leading-tight">09:15 · 散客王小姐</span>
+</div>
+</div>
+<span class="font-amount-md text-amount-md font-semibold text-income-mint">+¥500.00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initLedgerDesk() {
+    let currentMode = 'expense'; // 'expense' or 'income'
+    let currentCat = '进货成本';
+    let currentCatIcon = '📦';
+    const initialBaseProfit = 24800.00;
+
+    const amountInput = document.getElementById('amount-input');
+    const currencySymbol = document.getElementById('currency-symbol');
+    const previewAmount = document.getElementById('preview-amount');
+    const previewCategory = document.getElementById('preview-category');
+    const previewSupplier = document.getElementById('preview-supplier');
+    const previewNote = document.getElementById('preview-note');
+    const previewBalance = document.getElementById('preview-balance');
+    const saveBtnText = document.getElementById('save-btn-text');
+    const tabExpense = document.getElementById('tab-expense');
+    const tabIncome = document.getElementById('tab-income');
+    const activeCatLabel = document.getElementById('active-cat-label');
+    const supplierInput = document.getElementById('supplier-input');
+    const noteInput = document.getElementById('note-input');
+
+    function updatePreview() {
+      const val = parseFloat(amountInput.value) || 0;
+      const formattedVal = val.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      
+      if (currentMode === 'expense') {
+        previewAmount.className = "font-amount-lg text-amount-lg text-expense-coral font-bold";
+        previewAmount.textContent = `-¥${formattedVal}`;
+        saveBtnText.textContent = `保存支出 (¥${formattedVal})`;
+        currencySymbol.className = "font-headline-xl text-headline-xl font-bold text-expense-coral";
+        const newProfit = initialBaseProfit - val;
+        previewBalance.textContent = `¥${newProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}`;
+      } else {
+        previewAmount.className = "font-amount-lg text-amount-lg text-income-mint font-bold";
+        previewAmount.textContent = `+¥${formattedVal}`;
+        saveBtnText.textContent = `保存收入 (¥${formattedVal})`;
+        currencySymbol.className = "font-headline-xl text-headline-xl font-bold text-income-mint";
+        const newProfit = initialBaseProfit + val;
+        previewBalance.textContent = `¥${newProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}`;
+      }
+
+      previewCategory.innerHTML = `<span>${currentCatIcon}</span> ${currentCat}`;
+      previewSupplier.textContent = supplierInput.value || '无往来单位';
+      previewNote.textContent = noteInput.value || '未填备注说明';
+    }
+
+    // Toggle Modes
+    tabExpense.addEventListener('click', () => {
+      currentMode = 'expense';
+      tabExpense.className = "flex items-center gap-space-xs px-space-lg py-2 rounded-full font-headline-sm text-headline-sm transition-all duration-150 bg-surface-card text-expense-coral shadow-sm";
+      tabIncome.className = "flex items-center gap-space-xs px-space-lg py-2 rounded-full font-headline-sm text-headline-sm transition-all duration-150 text-text-secondary hover:text-on-surface";
+      updatePreview();
+    });
+
+    tabIncome.addEventListener('click', () => {
+      currentMode = 'income';
+      tabIncome.className = "flex items-center gap-space-xs px-space-lg py-2 rounded-full font-headline-sm text-headline-sm transition-all duration-150 bg-surface-card text-income-mint shadow-sm";
+      tabExpense.className = "flex items-center gap-space-xs px-space-lg py-2 rounded-full font-headline-sm text-headline-sm transition-all duration-150 text-text-secondary hover:text-on-surface";
+      updatePreview();
+    });
+
+    // Category Selector
+    document.querySelectorAll('.category-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-chip').forEach(c => {
+          c.className = "category-chip flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-cream text-on-surface-variant hover:bg-surface-container transition-all";
+        });
+        btn.className = "category-chip selected flex flex-col items-center justify-center p-space-md rounded-xl bg-secondary-container text-on-secondary-container shadow-sm transition-all";
+        currentCat = btn.dataset.name;
+        currentCatIcon = btn.querySelector('span:first-child').textContent;
+        activeCatLabel.textContent = currentCat;
+        updatePreview();
+      });
+    });
+
+    // Quick Amount Pills
+    document.querySelectorAll('.amount-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        amountInput.value = parseFloat(btn.dataset.value).toFixed(2);
+        updatePreview();
+      });
+    });
+
+    // Keypad Logic
+    document.querySelectorAll('.key-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.key;
+        if (key === 'C') {
+          amountInput.value = '0';
+        } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+          // simple inline evaluate demo
+          try {
+            amountInput.value = eval(amountInput.value) || '0';
+          } catch(e) {}
+        } else {
+          if (amountInput.value === '0' && key !== '.') {
+            amountInput.value = key;
+          } else {
+            amountInput.value += key;
+          }
+        }
+        updatePreview();
+      });
+    });
+
+    // Supplier Suggestions
+    document.querySelectorAll('.supplier-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        supplierInput.value = pill.textContent.trim();
+        updatePreview();
+      });
+    });
+
+    // Inputs listener
+    amountInput.addEventListener('input', updatePreview);
+    supplierInput.addEventListener('input', updatePreview);
+    noteInput.addEventListener('input', updatePreview);
+
+    document.getElementById('clear-input-btn').addEventListener('click', () => {
+      amountInput.value = '0';
+      updatePreview();
+    });
+
+    // Save Feedback Simulation
+    const saveBtn = document.getElementById('save-primary-btn');
+    saveBtn.addEventListener('click', () => {
+      const origText = saveBtnText.textContent;
+      saveBtnText.textContent = "已记入系统 ✓";
+      saveBtn.classList.add('bg-income-mint');
+      setTimeout(() => {
+        saveBtn.classList.remove('bg-income-mint');
+        saveBtnText.textContent = origText;
+      }, 1500);
+    });
+
+    // Keyboard shortcut Alt+S
+    window.addEventListener('keydown', (e) => {
+      if (e.altKey && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        saveBtn.click();
+      }
+    });
+
+    updatePreview();
+  })();
+</script></main></div></body></html>

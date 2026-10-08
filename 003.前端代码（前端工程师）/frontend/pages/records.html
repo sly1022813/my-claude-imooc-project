@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>记录 - 轻记账</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#9b3f5a",
+            "income-mint": "#7ED7C1",
+            "expense-coral": "#FF6B6B",
+            "pending-amber": "#FFB347",
+            "surface-cream": "#FFF5F7",
+            "surface-card": "#FFFFFF",
+            "border-soft": "#FFE4E8",
+            "text-secondary": "#666666",
+            "text-muted": "#999999",
+            "on-primary": "#ffffff",
+            "on-surface": "#1b1c1c",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f0eded",
+            "secondary-fixed": "#ffd9e1",
+            "secondary-container": "#fdb2c5",
+            "on-secondary-container": "#7a4151",
+            "on-surface-variant": "#544245",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'Space Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined'; }
+  </style>
+</head>
+<body class="bg-surface-cream text-on-surface min-h-screen pb-20">
+  <!-- Header -->
+  <header class="bg-surface-card border-b border-border-soft px-4 py-3 sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      <a href="index.html" class="p-2 -ml-2 hover:bg-surface-cream rounded-full">
+        <span class="material-symbols-outlined text-xl text-on-surface-variant">arrow_back</span>
+      </a>
+      <h1 class="font-semibold text-lg">收支记录</h1>
+      <button class="p-2 -mr-2 hover:bg-surface-cream rounded-full" onclick="showFilterModal()">
+        <span class="material-symbols-outlined text-xl text-on-surface-variant">filter_list</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 py-4">
+    <!-- Filter Summary -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="text-sm text-text-muted" id="filter-summary">全部记录</div>
+      <div class="flex items-center gap-2">
+        <select id="type-filter" class="text-sm px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft outline-none" onchange="applyFilters()">
+          <option value="">全部类型</option>
+          <option value="1">支出</option>
+          <option value="2">收入</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Records List -->
+    <section class="bg-surface-card rounded-xl border border-border-soft overflow-hidden" id="records-container">
+      <div class="p-8 text-center text-text-muted">
+        <span class="material-symbols-outlined text-4xl animate-pulse">hourglass_empty</span>
+        <p class="mt-2">加载中...</p>
+      </div>
+    </section>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-center gap-2 mt-4" id="pagination"></div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-surface-card border-t border-border-soft">
+    <div class="max-w-2xl mx-auto flex justify-around py-2">
+      <a href="index.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">home</span>
+        <span class="text-xs mt-1">首页</span>
+      </a>
+      <a href="records.html" class="flex flex-col items-center p-2 text-primary">
+        <span class="material-symbols-outlined text-2xl">receipt_long</span>
+        <span class="text-xs mt-1">记录</span>
+      </a>
+      <a href="#" class="flex flex-col items-center p-2 -mt-6" onclick="window.parent && window.parent.showAddModal && window.parent.showAddModal(1); return false;">
+        <div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
+          <span class="material-symbols-outlined text-3xl text-white">add</span>
+        </div>
+      </a>
+      <a href="customers.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">group</span>
+        <span class="text-xs mt-1">客户</span>
+      </a>
+      <a href="mine.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        <span class="text-xs mt-1">我的</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Filter Modal -->
+  <div id="filter-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="absolute bottom-0 left-0 right-0 bg-surface-card rounded-t-2xl max-h-[80vh] overflow-y-auto">
+      <div class="sticky top-0 bg-surface-card p-4 border-b border-border-soft flex items-center justify-between">
+        <h3 class="font-semibold text-lg">筛选条件</h3>
+        <button onclick="closeFilterModal()" class="p-2 hover:bg-surface-cream rounded-full">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="p-4 space-y-4">
+        <!-- Date Range -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">日期范围</label>
+          <div class="flex gap-2">
+            <input type="date" id="filter-start-date" class="flex-1 h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none">
+            <span class="self-center text-text-muted">至</span>
+            <input type="date" id="filter-end-date" class="flex-1 h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none">
+          </div>
+        </div>
+
+        <!-- Quick Date Buttons -->
+        <div class="flex gap-2 flex-wrap">
+          <button class="px-3 py-1.5 rounded-full bg-surface-cream text-sm" onclick="setDateRange('today')">今天</button>
+          <button class="px-3 py-1.5 rounded-full bg-surface-cream text-sm" onclick="setDateRange('week')">本周</button>
+          <button class="px-3 py-1.5 rounded-full bg-surface-cream text-sm" onclick="setDateRange('month')">本月</button>
+          <button class="px-3 py-1.5 rounded-full bg-surface-cream text-sm" onclick="setDateRange('year')">本年</button>
+        </div>
+
+        <!-- Type -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">收支类型</label>
+          <div class="flex gap-2">
+            <button class="filter-type-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-type="" onclick="selectFilterType(this)">全部</button>
+            <button class="filter-type-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent text-expense-coral" data-type="1" onclick="selectFilterType(this)">支出</button>
+            <button class="filter-type-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent text-income-mint" data-type="2" onclick="selectFilterType(this)">收入</button>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">记录状态</label>
+          <div class="flex gap-2">
+            <button class="filter-status-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-status="" onclick="selectFilterStatus(this)">全部</button>
+            <button class="filter-status-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent text-income-mint" data-status="1" onclick="selectFilterStatus(this)">已收付</button>
+            <button class="filter-status-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent text-pending-amber" data-status="2" onclick="selectFilterStatus(this)">待收付</button>
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">分类</label>
+          <select id="filter-category" class="w-full h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none">
+            <option value="">全部分类</option>
+          </select>
+        </div>
+
+        <!-- Counterparty Type -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">对方类型</label>
+          <div class="flex gap-2">
+            <button class="filter-counter-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-ctype="" onclick="selectFilterCounter(this)">全部</button>
+            <button class="filter-counter-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-ctype="1" onclick="selectFilterCounter(this)">客户</button>
+            <button class="filter-counter-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-ctype="2" onclick="selectFilterCounter(this)">供应商</button>
+          </div>
+        </div>
+      </div>
+      <div class="sticky bottom-0 bg-surface-card p-4 border-t border-border-soft flex gap-3">
+        <button class="flex-1 h-12 rounded-xl bg-surface-cream text-text-secondary font-semibold" onclick="resetFilters()">重置</button>
+        <button class="flex-1 h-12 rounded-xl bg-primary text-white font-semibold" onclick="applyFilters()">应用筛选</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="absolute bottom-0 left-0 right-0 bg-surface-card rounded-t-2xl max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-surface-card p-4 border-b border-border-soft flex items-center justify-between">
+        <h3 class="font-semibold text-lg">记录详情</h3>
+        <button onclick="closeDetailModal()" class="p-2 hover:bg-surface-cream rounded-full">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="p-4" id="detail-content"></div>
+      <div class="sticky bottom-0 bg-surface-card p-4 border-t border-border-soft flex gap-3">
+        <button class="flex-1 h-12 rounded-xl bg-expense-coral text-white font-semibold" onclick="deleteRecord()">删除</button>
+        <button class="flex-1 h-12 rounded-xl bg-primary text-white font-semibold" onclick="editRecord()">编辑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none;"></div>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalPages = 1;
+    let currentRecordId = null;
+    let categories = [];
+
+    let filterType = '';
+    let filterStatus = '';
+    let filterCounterType = '';
+    let filterStartDate = '';
+    let filterEndDate = '';
+    let filterCategory = '';
+
+    // ============ Toast ============
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColors = {
+        success: 'bg-income-mint',
+        error: 'bg-expense-coral',
+        warning: 'bg-pending-amber',
+        info: 'bg-primary'
+      };
+      toast.className = `${bgColors[type]} text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ============ Check Auth ============
+    function checkAuth() {
+      if (!API.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // ============ Load Data ============
+    async function loadData() {
+      if (!checkAuth()) return;
+
+      // 加载分类
+      await loadCategories();
+
+      // 加载记录
+      await loadRecords();
+    }
+
+    async function loadCategories() {
+      try {
+        const res = await API.Category.getList();
+        categories = res.data;
+
+        // 填充筛选器中的分类选项
+        const select = document.getElementById('filter-category');
+        select.innerHTML = '<option value="">全部分类</option>' +
+          categories.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+      } catch (e) {
+        console.error('加载分类失败:', e);
+      }
+    }
+
+    async function loadRecords() {
+      const container = document.getElementById('records-container');
+      container.innerHTML = `
+        <div class="p-8 text-center text-text-muted">
+          <span class="material-symbols-outlined text-4xl animate-pulse">hourglass_empty</span>
+          <p class="mt-2">加载中...</p>
+        </div>
+      `;
+
+      try {
+        const params = {
+          page: currentPage,
+          pageSize: pageSize
+        };
+
+        if (filterType) params.type = filterType;
+        if (filterStatus) params.status = filterStatus;
+        if (filterCounterType) params.counterpartyType = filterCounterType;
+        if (filterStartDate) params.startDate = filterStartDate;
+        if (filterEndDate) params.endDate = filterEndDate;
+        if (filterCategory) params.categoryId = filterCategory;
+
+        const res = await API.Transaction.getList(params);
+        const { list, pagination } = res.data;
+        totalPages = pagination.totalPages;
+
+        updateFilterSummary();
+
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div class="p-8 text-center text-text-muted">
+              <span class="material-symbols-outlined text-4xl">receipt_long</span>
+              <p class="mt-2">暂无记录</p>
+            </div>
+          `;
+          document.getElementById('pagination').innerHTML = '';
+          return;
+        }
+
+        // 按日期分组
+        const grouped = {};
+        list.forEach(tx => {
+          if (!grouped[tx.date]) {
+            grouped[tx.date] = [];
+          }
+          grouped[tx.date].push(tx);
+        });
+
+        container.innerHTML = Object.entries(grouped).map(([date, transactions]) => `
+          <div class="border-b border-border-soft last:border-b-0">
+            <div class="px-4 py-2 bg-surface-cream/50 text-xs text-text-muted flex justify-between">
+              <span>${date}</span>
+              <span>${transactions.length} 笔</span>
+            </div>
+            ${transactions.map(tx => `
+              <div class="p-4 flex items-center gap-3 hover:bg-surface-cream cursor-pointer transition-colors" onclick="showDetail(${tx.id})">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl" style="background-color: ${tx.category_color}20">
+                  ${tx.category_icon}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium truncate">${tx.category_name}</div>
+                  <div class="text-xs text-text-muted flex items-center gap-2">
+                    ${tx.remark || '无备注'}
+                    ${tx.status === 2 ? '<span class="text-pending-amber">待收/待付</span>' : ''}
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="font-mono font-semibold ${tx.type === 1 ? 'text-expense-coral' : 'text-income-mint'}">
+                    ${tx.type === 1 ? '-' : '+'}¥${Utils.formatAmount(tx.amount)}
+                  </div>
+                  <div class="text-xs text-text-muted">${tx.payment_method_name || '其他'}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('');
+
+        renderPagination();
+      } catch (e) {
+        console.error('加载记录失败:', e);
+        container.innerHTML = `
+          <div class="p-8 text-center text-expense-coral">
+            <span class="material-symbols-outlined text-4xl">error</span>
+            <p class="mt-2">加载失败: ${e.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function updateFilterSummary() {
+      const parts = [];
+      if (filterType) {
+        parts.push(filterType === '1' ? '支出' : '收入');
+      }
+      if (filterStatus) {
+        parts.push(filterStatus === '1' ? '已收付' : '待收付');
+      }
+      if (filterStartDate && filterEndDate) {
+        parts.push(`${filterStartDate} ~ ${filterEndDate}`);
+      }
+      document.getElementById('filter-summary').textContent = parts.length > 0 ? parts.join(' · ') : '全部记录';
+    }
+
+    function renderPagination() {
+      const container = document.getElementById('pagination');
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+
+      if (currentPage > 1) {
+        html += `<button class="px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft" onclick="goToPage(${currentPage - 1})">
+          <span class="material-symbols-outlined text-lg">chevron_left</span>
+        </button>`;
+      }
+
+      // Page numbers
+      const start = Math.max(1, currentPage - 2);
+      const end = Math.min(totalPages, currentPage + 2);
+
+      if (start > 1) {
+        html += `<button class="px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft" onclick="goToPage(1)">1</button>`;
+        if (start > 2) html += '<span class="px-2 text-text-muted">...</span>';
+      }
+
+      for (let i = start; i <= end; i++) {
+        const active = i === currentPage ? 'bg-primary text-white' : 'bg-surface-card border border-border-soft';
+        html += `<button class="px-3 py-1.5 rounded-lg ${active}" onclick="goToPage(${i})">${i}</button>`;
+      }
+
+      if (end < totalPages) {
+        if (end < totalPages - 1) html += '<span class="px-2 text-text-muted">...</span>';
+        html += `<button class="px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+      }
+
+      if (currentPage < totalPages) {
+        html += `<button class="px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft" onclick="goToPage(${currentPage + 1})">
+          <span class="material-symbols-outlined text-lg">chevron_right</span>
+        </button>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      loadRecords();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ============ Filter Modal ============
+    function showFilterModal() {
+      document.getElementById('filter-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFilterModal() {
+      document.getElementById('filter-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function setDateRange(range) {
+      const today = new Date();
+      let start, end;
+
+      switch (range) {
+        case 'today':
+          start = end = today.toISOString().split('T')[0];
+          break;
+        case 'week':
+          const dayOfWeek = today.getDay() || 7;
+          start = new Date(today.setDate(today.getDate() - dayOfWeek + 1)).toISOString().split('T')[0];
+          end = new Date().toISOString().split('T')[0];
+          break;
+        case 'month':
+          start = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
+          end = new Date().toISOString().split('T')[0];
+          break;
+        case 'year':
+          start = `${today.getFullYear()}-01-01`;
+          end = new Date().toISOString().split('T')[0];
+          break;
+      }
+
+      document.getElementById('filter-start-date').value = start;
+      document.getElementById('filter-end-date').value = end;
+    }
+
+    function selectFilterType(btn) {
+      document.querySelectorAll('.filter-type-btn').forEach(b => {
+        b.classList.remove('border-primary', 'bg-surface-cream');
+      });
+      btn.classList.add('border-primary', 'bg-surface-cream');
+      filterType = btn.dataset.type;
+    }
+
+    function selectFilterStatus(btn) {
+      document.querySelectorAll('.filter-status-btn').forEach(b => {
+        b.classList.remove('border-primary', 'bg-surface-cream');
+      });
+      btn.classList.add('border-primary', 'bg-surface-cream');
+      filterStatus = btn.dataset.status;
+    }
+
+    function selectFilterCounter(btn) {
+      document.querySelectorAll('.filter-counter-btn').forEach(b => {
+        b.classList.remove('border-primary', 'bg-surface-cream');
+      });
+      btn.classList.add('border-primary', 'bg-surface-cream');
+      filterCounterType = btn.dataset.ctype;
+    }
+
+    function resetFilters() {
+      filterType = '';
+      filterStatus = '';
+      filterCounterType = '';
+      filterStartDate = '';
+      filterEndDate = '';
+      filterCategory = '';
+      currentPage = 1;
+
+      document.getElementById('filter-start-date').value = '';
+      document.getElementById('filter-end-date').value = '';
+      document.getElementById('filter-category').value = '';
+
+      document.querySelectorAll('.filter-type-btn, .filter-status-btn, .filter-counter-btn').forEach(b => {
+        b.classList.remove('border-primary', 'bg-surface-cream');
+      });
+      document.querySelector('.filter-type-btn[data-type=""]').classList.add('border-primary', 'bg-surface-cream');
+      document.querySelector('.filter-status-btn[data-status=""]').classList.add('border-primary', 'bg-surface-cream');
+      document.querySelector('.filter-counter-btn[data-ctype=""]').classList.add('border-primary', 'bg-surface-cream');
+
+      loadRecords();
+      closeFilterModal();
+    }
+
+    function applyFilters() {
+      filterStartDate = document.getElementById('filter-start-date').value;
+      filterEndDate = document.getElementById('filter-end-date').value;
+      filterCategory = document.getElementById('filter-category').value;
+      currentPage = 1;
+
+      loadRecords();
+      closeFilterModal();
+    }
+
+    // ============ Detail Modal ============
+    async function showDetail(id) {
+      currentRecordId = id;
+
+      try {
+        const res = await API.Transaction.getById(id);
+        const tx = res.data;
+
+        document.getElementById('detail-content').innerHTML = `
+          <div class="text-center py-6">
+            <div class="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-3" style="background-color: ${tx.category_color}20">
+              ${tx.category_icon}
+            </div>
+            <div class="text-3xl font-bold font-mono ${tx.type === 1 ? 'text-expense-coral' : 'text-income-mint'}">
+              ${tx.type === 1 ? '-' : '+'}¥${Utils.formatAmount(tx.amount)}
+            </div>
+            <div class="text-sm text-text-muted mt-1">${tx.category_name}</div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex justify-between py-2 border-b border-border-soft">
+              <span class="text-text-secondary">日期</span>
+              <span>${tx.date}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-border-soft">
+              <span class="text-text-secondary">类型</span>
+              <span class="${tx.type === 1 ? 'text-expense-coral' : 'text-income-mint'}">${tx.type === 1 ? '支出' : '收入'}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-border-soft">
+              <span class="text-text-secondary">支付方式</span>
+              <span>${tx.payment_method_name || '其他'}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-border-soft">
+              <span class="text-text-secondary">状态</span>
+              <span class="${tx.status === 1 ? 'text-income-mint' : 'text-pending-amber'}">${tx.status === 1 ? '已收付' : '待收/待付'}</span>
+            </div>
+            ${tx.counterparty ? `
+            <div class="flex justify-between py-2 border-b border-border-soft">
+              <span class="text-text-secondary">${tx.counterparty_type === 1 ? '客户' : tx.counterparty_type === 2 ? '供应商' : '对方'}</span>
+              <span>${tx.counterparty}</span>
+            </div>
+            ` : ''}
+            ${tx.remark ? `
+            <div class="flex justify-between py-2 border-b border-border-soft">
+              <span class="text-text-secondary">备注</span>
+              <span class="text-right max-w-[60%]">${tx.remark}</span>
+            </div>
+            ` : ''}
+            <div class="flex justify-between py-2">
+              <span class="text-text-secondary">创建时间</span>
+              <span class="text-text-muted text-sm">${tx.created_at}</span>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('detail-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } catch (e) {
+        showToast('加载详情失败', 'error');
+      }
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+      currentRecordId = null;
+    }
+
+    async function editRecord() {
+      if (!currentRecordId) return;
+      closeDetailModal();
+      // 跳转到首页打开编辑
+      window.location.href = `index.html?edit=${currentRecordId}`;
+    }
+
+    async function deleteRecord() {
+      if (!currentRecordId) return;
+
+      const confirmed = await Utils.confirm('确定要删除这条记录吗？');
+      if (!confirmed) return;
+
+      try {
+        await API.Transaction.delete(currentRecordId);
+        showToast('删除成功', 'success');
+        closeDetailModal();
+        loadRecords();
+      } catch (e) {
+        showToast('删除失败: ' + e.message, 'error');
+      }
+    }
+
+    // ============ Initialize ============
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

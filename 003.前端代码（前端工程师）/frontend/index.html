@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>轻记账 - 首页</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#9b3f5a",
+            "income-mint": "#7ED7C1",
+            "expense-coral": "#FF6B6B",
+            "pending-amber": "#FFB347",
+            "surface-cream": "#FFF5F7",
+            "surface-card": "#FFFFFF",
+            "border-soft": "#FFE4E8",
+            "text-secondary": "#666666",
+            "text-muted": "#999999",
+            "on-primary": "#ffffff",
+            "on-surface": "#1b1c1c",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f0eded",
+            "secondary-fixed": "#ffd9e1",
+            "secondary-container": "#fdb2c5",
+            "on-secondary-container": "#7a4151",
+            "on-surface-variant": "#544245",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'Space Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined'; }
+  </style>
+</head>
+<body class="bg-surface-cream text-on-surface min-h-screen pb-20">
+  <!-- Header -->
+  <header class="bg-surface-card border-b border-border-soft px-4 py-3 sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <img alt="轻记账" class="h-8 w-auto" src="https://via.placeholder.com/32/FF8FAB/FFFFFF?text=轻">
+        <span class="font-bold text-lg text-primary">轻记账</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-sm text-text-muted" id="current-month"></span>
+        <button class="p-2 rounded-full hover:bg-surface-cream transition-colors" onclick="showUserMenu()">
+          <span class="material-symbols-outlined text-xl text-on-surface-variant">account_circle</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
+    <!-- Month Overview Cards -->
+    <section class="grid grid-cols-3 gap-3">
+      <div class="bg-surface-card rounded-xl p-4 border border-border-soft">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-lg text-income-mint">arrow_downward</span>
+          <span class="text-xs text-text-secondary">本月收入</span>
+        </div>
+        <div class="text-lg font-bold font-mono text-income-mint" id="month-income">¥0.00</div>
+      </div>
+      <div class="bg-surface-card rounded-xl p-4 border border-border-soft">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-lg text-expense-coral">arrow_outward</span>
+          <span class="text-xs text-text-secondary">本月支出</span>
+        </div>
+        <div class="text-lg font-bold font-mono text-expense-coral" id="month-expense">¥0.00</div>
+      </div>
+      <div class="bg-surface-card rounded-xl p-4 border-2 border-primary">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-lg text-primary">account_balance_wallet</span>
+          <span class="text-xs text-primary font-medium">本月结余</span>
+        </div>
+        <div class="text-lg font-bold font-mono text-primary" id="month-profit">¥0.00</div>
+      </div>
+    </section>
+
+    <!-- Quick Add Buttons -->
+    <section class="grid grid-cols-2 gap-3">
+      <button class="bg-surface-card rounded-xl p-4 border border-border-soft flex items-center justify-center gap-3 hover:bg-secondary-fixed/30 transition-colors active:scale-95"
+              onclick="showAddModal(1)">
+        <span class="material-symbols-outlined text-2xl text-expense-coral">remove_circle</span>
+        <span class="font-semibold text-expense-coral">记支出</span>
+      </button>
+      <button class="bg-surface-card rounded-xl p-4 border border-border-soft flex items-center justify-center gap-3 hover:bg-secondary-fixed/30 transition-colors active:scale-95"
+              onclick="showAddModal(2)">
+        <span class="material-symbols-outlined text-2xl text-income-mint">add_circle</span>
+        <span class="font-semibold text-income-mint">记收入</span>
+      </button>
+    </section>
+
+    <!-- Trend Chart -->
+    <section class="bg-surface-card rounded-xl p-4 border border-border-soft">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-on-surface">收支趋势</h3>
+        <div class="flex gap-1">
+          <button class="px-3 py-1 rounded-full text-xs bg-primary text-white" id="trend-7" onclick="loadTrend(7)">近7天</button>
+          <button class="px-3 py-1 rounded-full text-xs bg-surface-cream text-text-secondary" id="trend-30" onclick="loadTrend(30)">近30天</button>
+        </div>
+      </div>
+      <div class="h-48">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </section>
+
+    <!-- Recent Transactions -->
+    <section class="bg-surface-card rounded-xl border border-border-soft">
+      <div class="flex items-center justify-between p-4 border-b border-border-soft">
+        <h3 class="font-semibold text-on-surface">最近记录</h3>
+        <a href="records.html" class="text-sm text-primary">查看全部</a>
+      </div>
+      <div class="divide-y divide-border-soft" id="recent-list">
+        <div class="p-8 text-center text-text-muted">
+          <span class="material-symbols-outlined text-4xl">receipt_long</span>
+          <p class="mt-2">暂无记录，开始记账吧~</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-surface-card border-t border-border-soft">
+    <div class="max-w-2xl mx-auto flex justify-around py-2">
+      <a href="index.html" class="flex flex-col items-center p-2 text-primary">
+        <span class="material-symbols-outlined text-2xl">home</span>
+        <span class="text-xs mt-1">首页</span>
+      </a>
+      <a href="pages/records.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">receipt_long</span>
+        <span class="text-xs mt-1">记录</span>
+      </a>
+      <a href="#" class="flex flex-col items-center p-2 -mt-6" onclick="showAddModal(1); return false;">
+        <div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
+          <span class="material-symbols-outlined text-3xl text-white">add</span>
+        </div>
+      </a>
+      <a href="pages/customers.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">group</span>
+        <span class="text-xs mt-1">客户</span>
+      </a>
+      <a href="pages/mine.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        <span class="text-xs mt-1">我的</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Add Transaction Modal -->
+  <div id="add-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="absolute bottom-0 left-0 right-0 bg-surface-card rounded-t-2xl max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-surface-card p-4 border-b border-border-soft flex items-center justify-between">
+        <h3 class="font-semibold text-lg" id="modal-title">记一笔</h3>
+        <button onclick="closeAddModal()" class="p-2 hover:bg-surface-cream rounded-full">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form class="p-4 space-y-4" id="transaction-form">
+        <input type="hidden" id="tx-type" value="1">
+        <input type="hidden" id="tx-id" value="">
+
+        <!-- Amount -->
+        <div class="text-center py-4">
+          <div class="text-4xl font-bold font-mono" id="amount-display">¥0.00</div>
+          <input type="number" id="tx-amount" class="hidden" value="0" step="0.01" min="0.01">
+        </div>
+
+        <!-- Amount Quick Buttons -->
+        <div class="flex gap-2 justify-center flex-wrap">
+          <button type="button" class="px-4 py-2 rounded-full bg-surface-cream text-sm hover:bg-secondary-fixed" onclick="setAmount(50)">50</button>
+          <button type="button" class="px-4 py-2 rounded-full bg-surface-cream text-sm hover:bg-secondary-fixed" onclick="setAmount(100)">100</button>
+          <button type="button" class="px-4 py-2 rounded-full bg-surface-cream text-sm hover:bg-secondary-fixed" onclick="setAmount(200)">200</button>
+          <button type="button" class="px-4 py-2 rounded-full bg-surface-cream text-sm hover:bg-secondary-fixed" onclick="setAmount(500)">500</button>
+          <button type="button" class="px-4 py-2 rounded-full bg-surface-cream text-sm hover:bg-secondary-fixed" onclick="setAmount(1000)">1000</button>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">选择分类</label>
+          <div class="grid grid-cols-4 gap-2" id="category-list"></div>
+        </div>
+
+        <!-- Payment Method -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">支付方式</label>
+          <select id="tx-payment" class="w-full h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none">
+            <option value="">选择支付方式</option>
+            <option value="1">💵 现金</option>
+            <option value="2">💚 微信支付</option>
+            <option value="3">💙 支付宝</option>
+            <option value="4">💳 银行卡</option>
+            <option value="5">📝 其他</option>
+          </select>
+        </div>
+
+        <!-- Date -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">日期</label>
+          <input type="date" id="tx-date" class="w-full h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none">
+        </div>
+
+        <!-- Remark -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">备注</label>
+          <textarea id="tx-remark" rows="2" class="w-full px-4 py-3 rounded-lg bg-surface-cream border border-border-soft outline-none resize-none" placeholder="添加备注..."></textarea>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="w-full h-14 rounded-xl bg-primary text-white font-semibold text-lg shadow-md active:scale-95 transition-all" id="submit-btn">
+          保存记录
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none;"></div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script>
+    let trendChart = null;
+    let categories = [];
+
+    // ============ Toast ============
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColors = {
+        success: 'bg-income-mint',
+        error: 'bg-expense-coral',
+        warning: 'bg-pending-amber',
+        info: 'bg-primary'
+      };
+      toast.className = `${bgColors[type]} text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ============ Check Auth ============
+    function checkAuth() {
+      if (!API.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // ============ Load Data ============
+    async function loadData() {
+      if (!checkAuth()) return;
+
+      // 显示当前月份
+      const now = new Date();
+      document.getElementById('current-month').textContent = `${now.getFullYear()}年${now.getMonth() + 1}月`;
+
+      // 加载月度统计
+      await loadMonthlyStats();
+
+      // 加载分类
+      await loadCategories();
+
+      // 加载最近记录
+      await loadRecentTransactions();
+
+      // 加载趋势图
+      await loadTrend(7);
+    }
+
+    async function loadMonthlyStats() {
+      try {
+        const res = await API.Transaction.getMonthlyStats(Utils.getCurrentMonth());
+        const data = res.data;
+
+        document.getElementById('month-income').textContent = `¥${Utils.formatAmount(data.totalIncome)}`;
+        document.getElementById('month-expense').textContent = `¥${Utils.formatAmount(data.totalExpense)}`;
+        document.getElementById('month-profit').textContent = `¥${Utils.formatAmount(data.netProfit)}`;
+      } catch (e) {
+        console.error('加载月度统计失败:', e);
+      }
+    }
+
+    async function loadCategories() {
+      try {
+        const res = await API.Category.getList();
+        categories = res.data;
+      } catch (e) {
+        console.error('加载分类失败:', e);
+      }
+    }
+
+    async function loadRecentTransactions() {
+      try {
+        const res = await API.Transaction.getList({ pageSize: 5 });
+        const list = res.data.list;
+
+        const container = document.getElementById('recent-list');
+
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div class="p-8 text-center text-text-muted">
+              <span class="material-symbols-outlined text-4xl">receipt_long</span>
+              <p class="mt-2">暂无记录，开始记账吧~</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = list.map(tx => `
+          <div class="p-4 flex items-center gap-3 hover:bg-surface-cream cursor-pointer" onclick="editTransaction(${tx.id})">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl" style="background-color: ${tx.category_color}20">
+              ${tx.category_icon}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium truncate">${tx.category_name}</div>
+              <div class="text-xs text-text-muted">${tx.date} ${tx.remark || ''}</div>
+            </div>
+            <div class="font-mono font-semibold ${tx.type === 1 ? 'text-expense-coral' : 'text-income-mint'}">
+              ${tx.type === 1 ? '-' : '+'}¥${Utils.formatAmount(tx.amount)}
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('加载最近记录失败:', e);
+      }
+    }
+
+    async function loadTrend(days) {
+      // 更新按钮状态
+      document.getElementById('trend-7').className = days === 7 ? 'px-3 py-1 rounded-full text-xs bg-primary text-white' : 'px-3 py-1 rounded-full text-xs bg-surface-cream text-text-secondary';
+      document.getElementById('trend-30').className = days === 30 ? 'px-3 py-1 rounded-full text-xs bg-primary text-white' : 'px-3 py-1 rounded-full text-xs bg-surface-cream text-text-secondary';
+
+      try {
+        const res = await API.Transaction.getDailyTrend(days);
+        const data = res.data.data;
+
+        const labels = data.map(d => d.date.slice(5));
+        const incomeData = data.map(d => d.daily_income || 0);
+        const expenseData = data.map(d => d.daily_expense || 0);
+
+        if (trendChart) {
+          trendChart.destroy();
+        }
+
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        trendChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: '收入',
+                data: incomeData,
+                borderColor: '#7ED7C1',
+                backgroundColor: 'rgba(126, 215, 193, 0.1)',
+                fill: true,
+                tension: 0.4
+              },
+              {
+                label: '支出',
+                data: expenseData,
+                borderColor: '#FF6B6B',
+                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                fill: true,
+                tension: 0.4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { usePointStyle: true }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { callback: v => '¥' + v }
+              }
+            }
+          }
+        });
+      } catch (e) {
+        console.error('加载趋势失败:', e);
+      }
+    }
+
+    // ============ Transaction Modal ============
+    function showAddModal(type) {
+      if (!checkAuth()) return;
+
+      document.getElementById('tx-type').value = type;
+      document.getElementById('tx-id').value = '';
+      document.getElementById('tx-amount').value = 0;
+      document.getElementById('amount-display').textContent = '¥0.00';
+      document.getElementById('tx-remark').value = '';
+      document.getElementById('tx-payment').value = '';
+      document.getElementById('tx-date').value = Utils.getToday();
+
+      document.getElementById('modal-title').textContent = type === 1 ? '记支出' : '记收入';
+      document.getElementById('submit-btn').textContent = '保存支出';
+      document.getElementById('submit-btn').className = type === 1 ? 'w-full h-14 rounded-xl bg-expense-coral text-white font-semibold text-lg shadow-md active:scale-95 transition-all' : 'w-full h-14 rounded-xl bg-income-mint text-white font-semibold text-lg shadow-md active:scale-95 transition-all';
+
+      // 渲染分类
+      renderCategories(type);
+
+      document.getElementById('add-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function renderCategories(type) {
+      const container = document.getElementById('category-list');
+      const filtered = categories.filter(c => c.type === type);
+
+      container.innerHTML = filtered.map(c => `
+        <button type="button" class="category-btn flex flex-col items-center p-2 rounded-lg border-2 border-transparent hover:border-primary transition-all"
+                data-id="${c.id}" onclick="selectCategory(this)">
+          <span class="text-2xl">${c.icon}</span>
+          <span class="text-xs mt-1 truncate w-full text-center">${c.name}</span>
+        </button>
+      `).join('');
+    }
+
+    let selectedCategoryId = null;
+    function selectCategory(btn) {
+      document.querySelectorAll('.category-btn').forEach(b => {
+        b.classList.remove('border-primary', 'bg-surface-cream');
+      });
+      btn.classList.add('border-primary', 'bg-surface-cream');
+      selectedCategoryId = parseInt(btn.dataset.id);
+    }
+
+    function setAmount(amount) {
+      document.getElementById('tx-amount').value = amount;
+      document.getElementById('amount-display').textContent = `¥${Utils.formatAmount(amount)}`;
+    }
+
+    // Amount input handler
+    document.getElementById('tx-amount')?.addEventListener('input', (e) => {
+      document.getElementById('amount-display').textContent = `¥${Utils.formatAmount(e.target.value)}`;
+    });
+
+    // Submit form
+    document.getElementById('transaction-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const type = parseInt(document.getElementById('tx-type').value);
+      const amount = parseFloat(document.getElementById('tx-amount').value);
+      const categoryId = selectedCategoryId;
+      const date = document.getElementById('tx-date').value;
+      const paymentMethod = document.getElementById('tx-payment').value;
+      const remark = document.getElementById('tx-remark').value;
+
+      if (!amount || amount <= 0) {
+        showToast('请输入金额', 'error');
+        return;
+      }
+
+      if (!categoryId) {
+        showToast('请选择分类', 'error');
+        return;
+      }
+
+      try {
+        await API.Transaction.create({
+          type,
+          amount,
+          categoryId,
+          date,
+          paymentMethod: paymentMethod ? parseInt(paymentMethod) : null,
+          remark
+        });
+
+        showToast('保存成功', 'success');
+        closeAddModal();
+        loadData();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    });
+
+    // Close modal on backdrop click
+    document.getElementById('add-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'add-modal') {
+        closeAddModal();
+      }
+    });
+
+    // ============ User Menu ============
+    function showUserMenu() {
+      const user = API.getCurrentUser();
+      showToast(`欢迎，${user?.username || '用户'}！`, 'info');
+    }
+
+    // ============ Edit Transaction ============
+    async function editTransaction(id) {
+      try {
+        const res = await API.Transaction.getById(id);
+        const tx = res.data;
+
+        document.getElementById('tx-id').value = tx.id;
+        document.getElementById('tx-type').value = tx.type;
+        document.getElementById('tx-amount').value = tx.amount;
+        document.getElementById('amount-display').textContent = `¥${Utils.formatAmount(tx.amount)}`;
+        document.getElementById('tx-date').value = tx.date;
+        document.getElementById('tx-payment').value = tx.payment_method || '';
+        document.getElementById('tx-remark').value = tx.remark || '';
+
+        renderCategories(tx.type);
+        setTimeout(() => {
+          const btn = document.querySelector(`.category-btn[data-id="${tx.category_id}"]`);
+          if (btn) selectCategory(btn);
+        }, 100);
+
+        document.getElementById('modal-title').textContent = '编辑记录';
+        document.getElementById('add-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } catch (e) {
+        showToast('加载失败', 'error');
+      }
+    }
+
+    // ============ Initialize ============
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadData();
+
+      // Check URL params for edit mode (from records page)
+      const params = new URLSearchParams(window.location.search);
+      const editId = params.get('edit');
+      if (editId) {
+        // Remove the param from URL without reload
+        window.history.replaceState({}, '', window.location.pathname);
+        editTransaction(parseInt(editId));
+      }
+    });
+  </script>
+</body>
+</html>

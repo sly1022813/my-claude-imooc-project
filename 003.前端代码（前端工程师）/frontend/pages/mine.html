@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的 - 轻记账</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#9b3f5a",
+            "income-mint": "#7ED7C1",
+            "expense-coral": "#FF6B6B",
+            "pending-amber": "#FFB347",
+            "surface-cream": "#FFF5F7",
+            "surface-card": "#FFFFFF",
+            "border-soft": "#FFE4E8",
+            "text-secondary": "#666666",
+            "text-muted": "#999999",
+            "on-primary": "#ffffff",
+            "on-surface": "#1b1c1c",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f0eded",
+            "secondary-fixed": "#ffd9e1",
+            "secondary-container": "#fdb2c5",
+            "on-secondary-container": "#7a4151",
+            "on-surface-variant": "#544245",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'Space Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined'; }
+  </style>
+</head>
+<body class="bg-surface-cream text-on-surface min-h-screen pb-20">
+  <!-- Header -->
+  <header class="bg-primary text-white px-4 pt-8 pb-16">
+    <div class="max-w-2xl mx-auto">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-bold">我的</h1>
+        <button class="p-2 hover:bg-white/10 rounded-full" onclick="showSettings()">
+          <span class="material-symbols-outlined">settings</span>
+        </button>
+      </div>
+      <div class="flex items-center gap-4" id="user-info">
+        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-3xl">account_circle</span>
+        </div>
+        <div>
+          <div class="font-semibold text-lg" id="username">加载中...</div>
+          <div class="text-sm text-white/70" id="user-type">-</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 -mt-8">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+      <div class="bg-surface-card rounded-xl p-4 border border-border-soft text-center">
+        <div class="text-lg font-bold font-mono text-primary" id="stat-records">-</div>
+        <div class="text-xs text-text-muted mt-1">记账笔数</div>
+      </div>
+      <div class="bg-surface-card rounded-xl p-4 border border-border-soft text-center">
+        <div class="text-lg font-bold font-mono text-income-mint" id="stat-income">-</div>
+        <div class="text-xs text-text-muted mt-1">累计收入</div>
+      </div>
+      <div class="bg-surface-card rounded-xl p-4 border border-border-soft text-center">
+        <div class="text-lg font-bold font-mono text-expense-coral" id="stat-expense">-</div>
+        <div class="text-xs text-text-muted mt-1">累计支出</div>
+      </div>
+    </div>
+
+    <!-- Menu List -->
+    <section class="bg-surface-card rounded-xl border border-border-soft overflow-hidden">
+      <!-- Statistics -->
+      <a href="statistics.html" class="flex items-center gap-4 p-4 hover:bg-surface-cream transition-colors border-b border-border-soft">
+        <div class="w-10 h-10 rounded-full bg-income-mint/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl text-income-mint">bar_chart</span>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium">统计报表</div>
+          <div class="text-xs text-text-muted">查看收支分析</div>
+        </div>
+        <span class="material-symbols-outlined text-text-muted">chevron_right</span>
+      </a>
+
+      <!-- Pending -->
+      <a href="pending.html" class="flex items-center gap-4 p-4 hover:bg-surface-cream transition-colors border-b border-border-soft">
+        <div class="w-10 h-10 rounded-full bg-pending-amber/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl text-pending-amber">pending_actions</span>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium">待收/待付</div>
+          <div class="text-xs text-text-muted">处理挂账记录</div>
+        </div>
+        <span class="material-symbols-outlined text-text-muted">chevron_right</span>
+      </a>
+
+      <!-- Categories -->
+      <a href="categories.html" class="flex items-center gap-4 p-4 hover:bg-surface-cream transition-colors border-b border-border-soft">
+        <div class="w-10 h-10 rounded-full bg-secondary-container/30 flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl text-primary">category</span>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium">分类管理</div>
+          <div class="text-xs text-text-muted">管理收支分类</div>
+        </div>
+        <span class="material-symbols-outlined text-text-muted">chevron_right</span>
+      </a>
+
+      <!-- Export -->
+      <button class="w-full flex items-center gap-4 p-4 hover:bg-surface-cream transition-colors border-b border-border-soft text-left" onclick="exportData()">
+        <div class="w-10 h-10 rounded-full bg-income-mint/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl text-income-mint">cloud_download</span>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium">导出数据</div>
+          <div class="text-xs text-text-muted">备份账本数据</div>
+        </div>
+        <span class="material-symbols-outlined text-text-muted">chevron_right</span>
+      </button>
+
+      <!-- Import -->
+      <button class="w-full flex items-center gap-4 p-4 hover:bg-surface-cream transition-colors text-left" onclick="importData()">
+        <div class="w-10 h-10 rounded-full bg-pending-amber/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl text-pending-amber">cloud_upload</span>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium">导入数据</div>
+          <div class="text-xs text-text-muted">从备份恢复</div>
+        </div>
+        <span class="material-symbols-outlined text-text-muted">chevron_right</span>
+      </button>
+    </section>
+
+    <!-- About -->
+    <section class="bg-surface-card rounded-xl border border-border-soft overflow-hidden mt-4">
+      <button class="w-full flex items-center gap-4 p-4 hover:bg-surface-cream transition-colors border-b border-border-soft text-left" onclick="showAbout()">
+        <div class="w-10 h-10 rounded-full bg-surface-cream flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl text-text-secondary">info</span>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium">关于轻记账</div>
+          <div class="text-xs text-text-muted">版本信息</div>
+        </div>
+        <span class="text-xs text-text-muted mr-2">v1.0.0</span>
+        <span class="material-symbols-outlined text-text-muted">chevron_right</span>
+      </button>
+
+      <button class="w-full flex items-center gap-4 p-4 hover:bg-surface-cream transition-colors text-left" onclick="logout()">
+        <div class="w-10 h-10 rounded-full bg-expense-coral/10 flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl text-expense-coral">logout</span>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium text-expense-coral">退出登录</div>
+        </div>
+        <span class="material-symbols-outlined text-text-muted">chevron_right</span>
+      </button>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-surface-card border-t border-border-soft">
+    <div class="max-w-2xl mx-auto flex justify-around py-2">
+      <a href="index.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">home</span>
+        <span class="text-xs mt-1">首页</span>
+      </a>
+      <a href="records.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">receipt_long</span>
+        <span class="text-xs mt-1">记录</span>
+      </a>
+      <a href="#" class="flex flex-col items-center p-2 -mt-6">
+        <div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
+          <span class="material-symbols-outlined text-3xl text-white">add</span>
+        </div>
+      </a>
+      <a href="customers.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">group</span>
+        <span class="text-xs mt-1">客户</span>
+      </a>
+      <a href="mine.html" class="flex flex-col items-center p-2 text-primary">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        <span class="text-xs mt-1">我的</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Change Password Modal -->
+  <div id="password-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="absolute bottom-0 left-0 right-0 bg-surface-card rounded-t-2xl max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-surface-card p-4 border-b border-border-soft flex items-center justify-between">
+        <h3 class="font-semibold text-lg">修改密码</h3>
+        <button onclick="closePasswordModal()" class="p-2 hover:bg-surface-cream rounded-full">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form class="p-4 space-y-4" id="password-form">
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">原密码</label>
+          <input type="password" id="old-password" class="w-full h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none focus:border-primary"
+                 placeholder="输入原密码" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">新密码</label>
+          <input type="password" id="new-password" class="w-full h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none focus:border-primary"
+                 placeholder="输入新密码（6-20位）" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">确认新密码</label>
+          <input type="password" id="confirm-password" class="w-full h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none focus:border-primary"
+                 placeholder="再次输入新密码" required>
+        </div>
+        <div class="hidden text-expense-coral text-sm" id="password-error"></div>
+        <button type="submit" class="w-full h-14 rounded-xl bg-primary text-white font-semibold text-lg shadow-md active:scale-95 transition-all">
+          确认修改
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div id="about-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="absolute bottom-0 left-0 right-0 bg-surface-card rounded-t-2xl max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-surface-card p-4 border-b border-border-soft flex items-center justify-between">
+        <h3 class="font-semibold text-lg">关于轻记账</h3>
+        <button onclick="closeAboutModal()" class="p-2 hover:bg-surface-cream rounded-full">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="p-6 text-center">
+        <div class="w-20 h-20 rounded-2xl bg-primary/10 mx-auto flex items-center justify-center mb-4">
+          <span class="text-4xl">💰</span>
+        </div>
+        <h2 class="text-xl font-bold text-primary">轻记账</h2>
+        <p class="text-text-muted mt-1">版本 1.0.0</p>
+        <p class="text-sm text-text-secondary mt-4">一款简洁好用的个人/商户记账应用</p>
+        <div class="mt-6 space-y-2 text-sm text-text-muted">
+          <p>© 2024 轻记账</p>
+          <p>让每一笔收支都有迹可循</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none;"></div>
+
+  <!-- Hidden file input for import -->
+  <input type="file" id="import-file" accept=".json" style="display: none">
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    // ============ Toast ============
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColors = {
+        success: 'bg-income-mint',
+        error: 'bg-expense-coral',
+        warning: 'bg-pending-amber',
+        info: 'bg-primary'
+      };
+      toast.className = `${bgColors[type]} text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ============ Check Auth ============
+    function checkAuth() {
+      if (!API.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // ============ Load User Info ============
+    function loadUserInfo() {
+      const user = API.getCurrentUser();
+      if (user) {
+        document.getElementById('username').textContent = user.username || '用户';
+        document.getElementById('user-type').textContent = Utils.UserTypeMap[user.user_type] || '个人用户';
+      }
+    }
+
+    // ============ Load Stats ============
+    async function loadStats() {
+      try {
+        // Get current year-month for stats
+        const yearMonth = Utils.getCurrentMonth();
+
+        const res = await API.Transaction.getMonthlyStats(yearMonth);
+        const data = res.data;
+
+        document.getElementById('stat-income').textContent = '¥' + Utils.formatAmount(data.totalIncome);
+        document.getElementById('stat-expense').textContent = '¥' + Utils.formatAmount(data.totalExpense);
+
+        // Get total records count
+        const listRes = await API.Transaction.getList({ pageSize: 1 });
+        document.getElementById('stat-records').textContent = listRes.data.pagination?.total || 0;
+      } catch (e) {
+        console.error('加载统计失败:', e);
+      }
+    }
+
+    // ============ Settings ============
+    function showSettings() {
+      // Show a simple settings menu
+      const user = API.getCurrentUser();
+      showToast(`用户: ${user?.username || '未知'}`, 'info');
+    }
+
+    // ============ Change Password ============
+    function showPasswordModal() {
+      document.getElementById('password-form').reset();
+      document.getElementById('password-error').classList.add('hidden');
+      document.getElementById('password-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePasswordModal() {
+      document.getElementById('password-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('password-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const oldPassword = document.getElementById('old-password').value;
+      const newPassword = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const errorEl = document.getElementById('password-error');
+
+      if (newPassword.length < 6) {
+        errorEl.textContent = '新密码至少6个字符';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        errorEl.textContent = '两次输入的密码不一致';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        await API.Auth.changePassword({
+          oldPassword,
+          newPassword,
+          confirmPassword
+        });
+
+        showToast('密码修改成功', 'success');
+        closePasswordModal();
+      } catch (e) {
+        errorEl.textContent = e.message;
+        errorEl.classList.remove('hidden');
+      }
+    });
+
+    // ============ About ============
+    function showAbout() {
+      document.getElementById('about-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAboutModal() {
+      document.getElementById('about-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    // ============ Export/Import ============
+    async function exportData() {
+      try {
+        showToast('正在导出数据...', 'info');
+
+        // Get all data
+        const [transactions, customers, suppliers, categories] = await Promise.all([
+          API.Transaction.getList({ pageSize: 10000 }),
+          API.Customer.getList({}),
+          API.Supplier.getList({}),
+          API.Category.getList()
+        ]);
+
+        const exportData = {
+          version: '1.0.0',
+          exportTime: new Date().toISOString(),
+          transactions: transactions.data.list,
+          customers: customers.data.list,
+          suppliers: suppliers.data.list,
+          categories: categories.data
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `轻记账备份_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('导出成功', 'success');
+      } catch (e) {
+        console.error('导出失败:', e);
+        showToast('导出失败: ' + e.message, 'error');
+      }
+    }
+
+    function importData() {
+      document.getElementById('import-file').click();
+    }
+
+    document.getElementById('import-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const confirmed = await Utils.confirm('导入将合并现有数据，确定继续吗？');
+      if (!confirmed) {
+        e.target.value = '';
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        if (!data.version || !data.transactions) {
+          throw new Error('文件格式不正确');
+        }
+
+        showToast('正在导入数据...', 'info');
+
+        // Import transactions
+        for (const tx of data.transactions || []) {
+          try {
+            await API.Transaction.create({
+              type: tx.type,
+              amount: tx.amount,
+              categoryId: tx.category_id,
+              date: tx.date,
+              paymentMethod: tx.payment_method,
+              remark: tx.remark
+            });
+          } catch (e) {
+            console.warn('导入交易失败:', e);
+          }
+        }
+
+        // Import customers
+        for (const c of data.customers || []) {
+          try {
+            await API.Customer.create({
+              name: c.name,
+              phone: c.phone,
+              address: c.address,
+              remark: c.remark
+            });
+          } catch (e) {
+            console.warn('导入客户失败:', e);
+          }
+        }
+
+        // Import suppliers
+        for (const s of data.suppliers || []) {
+          try {
+            await API.Supplier.create({
+              name: s.name,
+              phone: s.phone,
+              address: s.address,
+              remark: s.remark
+            });
+          } catch (e) {
+            console.warn('导入供应商失败:', e);
+          }
+        }
+
+        showToast('导入成功', 'success');
+        loadStats();
+      } catch (e) {
+        console.error('导入失败:', e);
+        showToast('导入失败: ' + e.message, 'error');
+      } finally {
+        e.target.value = '';
+      }
+    });
+
+    // ============ Logout ============
+    async function logout() {
+      const confirmed = await Utils.confirm('确定要退出登录吗？');
+      if (!confirmed) return;
+
+      API.clearAuth();
+      window.location.href = 'login.html';
+    }
+
+    // ============ Initialize ============
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkAuth()) return;
+      loadUserInfo();
+      loadStats();
+    });
+  </script>
+</body>
+</html>

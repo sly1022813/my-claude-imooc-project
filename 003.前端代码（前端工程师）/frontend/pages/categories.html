@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分类管理 - 轻记账</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#9b3f5a",
+            "income-mint": "#7ED7C1",
+            "expense-coral": "#FF6B6B",
+            "pending-amber": "#FFB347",
+            "surface-cream": "#FFF5F7",
+            "surface-card": "#FFFFFF",
+            "border-soft": "#FFE4E8",
+            "text-secondary": "#666666",
+            "text-muted": "#999999",
+            "on-primary": "#ffffff",
+            "on-surface": "#1b1c1c",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f0eded",
+            "secondary-fixed": "#ffd9e1",
+            "secondary-container": "#fdb2c5",
+            "on-secondary-container": "#7a4151",
+            "on-surface-variant": "#544245",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'Space Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined'; }
+  </style>
+</head>
+<body class="bg-surface-cream text-on-surface min-h-screen pb-20">
+  <!-- Header -->
+  <header class="bg-surface-card border-b border-border-soft px-4 py-3 sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      <a href="mine.html" class="p-2 -ml-2 hover:bg-surface-cream rounded-full">
+        <span class="material-symbols-outlined text-xl text-on-surface-variant">arrow_back</span>
+      </a>
+      <h1 class="font-semibold text-lg">分类管理</h1>
+      <button class="p-2 -mr-2 hover:bg-surface-cream rounded-full" onclick="showAddModal()">
+        <span class="material-symbols-outlined text-xl text-primary">add_circle</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
+    <!-- Expense Categories -->
+    <section class="bg-surface-card rounded-xl border border-border-soft overflow-hidden">
+      <div class="p-4 border-b border-border-soft flex items-center gap-2">
+        <span class="material-symbols-outlined text-expense-coral">arrow_outward</span>
+        <h3 class="font-semibold text-expense-coral">支出分类</h3>
+        <span class="text-xs text-text-muted ml-auto" id="expense-count">0 个</span>
+      </div>
+      <div class="divide-y divide-border-soft" id="expense-list">
+        <div class="p-8 text-center text-text-muted">
+          <span class="material-symbols-outlined text-4xl animate-pulse">hourglass_empty</span>
+          <p class="mt-2">加载中...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Income Categories -->
+    <section class="bg-surface-card rounded-xl border border-border-soft overflow-hidden">
+      <div class="p-4 border-b border-border-soft flex items-center gap-2">
+        <span class="material-symbols-outlined text-income-mint">arrow_downward</span>
+        <h3 class="font-semibold text-income-mint">收入分类</h3>
+        <span class="text-xs text-text-muted ml-auto" id="income-count">0 个</span>
+      </div>
+      <div class="divide-y divide-border-soft" id="income-list">
+        <div class="p-8 text-center text-text-muted">
+          <span class="material-symbols-outlined text-4xl animate-pulse">hourglass_empty</span>
+          <p class="mt-2">加载中...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-surface-card border-t border-border-soft">
+    <div class="max-w-2xl mx-auto flex justify-around py-2">
+      <a href="index.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">home</span>
+        <span class="text-xs mt-1">首页</span>
+      </a>
+      <a href="records.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">receipt_long</span>
+        <span class="text-xs mt-1">记录</span>
+      </a>
+      <a href="#" class="flex flex-col items-center p-2 -mt-6">
+        <div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
+          <span class="material-symbols-outlined text-3xl text-white">add</span>
+        </div>
+      </a>
+      <a href="customers.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">group</span>
+        <span class="text-xs mt-1">客户</span>
+      </a>
+      <a href="mine.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        <span class="text-xs mt-1">我的</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Add/Edit Modal -->
+  <div id="add-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="absolute bottom-0 left-0 right-0 bg-surface-card rounded-t-2xl max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-surface-card p-4 border-b border-border-soft flex items-center justify-between">
+        <h3 class="font-semibold text-lg" id="modal-title">添加分类</h3>
+        <button onclick="closeAddModal()" class="p-2 hover:bg-surface-cream rounded-full">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form class="p-4 space-y-4" id="category-form">
+        <input type="hidden" id="category-id" value="">
+
+        <!-- Type -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">分类类型</label>
+          <div class="flex gap-2">
+            <button type="button" class="flex-1 py-3 rounded-lg bg-expense-coral text-white font-medium border-2 border-expense-coral" id="type-expense" onclick="selectType(1)">支出</button>
+            <button type="button" class="flex-1 py-3 rounded-lg bg-surface-cream text-text-secondary font-medium border-2 border-transparent" id="type-income" onclick="selectType(2)">收入</button>
+          </div>
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">分类名称 *</label>
+          <input type="text" id="category-name" class="w-full h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none focus:border-primary"
+                 placeholder="输入分类名称" required>
+        </div>
+
+        <!-- Icon -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">选择图标</label>
+          <div class="grid grid-cols-8 gap-2" id="icon-picker">
+            ${['🍔', '🚗', '🏠', '💊', '📱', '👔', '🎮', '✈️', '☕', '🎁', '💰', '📚', '🎓', '🏋️', '💇', '🛒', '🎵', '🎬', '💼', '🐱', '🐶', '🌸', '🍰', '⚽'].map(icon => `
+              <button type="button" class="icon-btn w-10 h-10 rounded-lg bg-surface-cream text-xl flex items-center justify-center hover:bg-secondary-fixed transition-colors" data-icon="${icon}" onclick="selectIcon(this)">${icon}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Color -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">选择颜色</label>
+          <div class="flex gap-2 flex-wrap" id="color-picker">
+            ${['#FF6B6B', '#FF8FAB', '#FFB3C6', '#FF6B9D', '#FFA07A', '#FFD700', '#7ED7C1', '#4ECDC4', '#45B7D1', '#96CEB4', '#9B59B6', '#3498DB'].map(color => `
+              <button type="button" class="color-btn w-10 h-10 rounded-full border-2 border-transparent hover:scale-110 transition-transform" style="background-color: ${color}" data-color="${color}" onclick="selectColor(this)"></button>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="w-full h-14 rounded-xl bg-primary text-white font-semibold text-lg shadow-md active:scale-95 transition-all">
+          保存
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none;"></div>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    let expenseCategories = [];
+    let incomeCategories = [];
+    let selectedType = 1;
+    let selectedIcon = '💰';
+    let selectedColor = '#FF6B6B';
+
+    // ============ Toast ============
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColors = {
+        success: 'bg-income-mint',
+        error: 'bg-expense-coral',
+        warning: 'bg-pending-amber',
+        info: 'bg-primary'
+      };
+      toast.className = `${bgColors[type]} text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ============ Check Auth ============
+    function checkAuth() {
+      if (!API.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // ============ Load Categories ============
+    async function loadCategories() {
+      try {
+        const res = await API.Category.getList();
+        const allCategories = res.data;
+
+        expenseCategories = allCategories.filter(c => c.type === 1);
+        incomeCategories = allCategories.filter(c => c.type === 2);
+
+        document.getElementById('expense-count').textContent = `${expenseCategories.length} 个`;
+        document.getElementById('income-count').textContent = `${incomeCategories.length} 个`;
+
+        renderCategoryList('expense-list', expenseCategories);
+        renderCategoryList('income-list', incomeCategories);
+      } catch (e) {
+        console.error('加载分类失败:', e);
+        showToast('加载分类失败', 'error');
+      }
+    }
+
+    function renderCategoryList(containerId, list) {
+      const container = document.getElementById(containerId);
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-text-muted">
+            <span class="material-symbols-outlined text-4xl">category</span>
+            <p class="mt-2">暂无分类</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(c => `
+        <div class="p-4 flex items-center gap-3 hover:bg-surface-cream cursor-pointer transition-colors" onclick="editCategory(${c.id})">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background-color: ${c.color}20">
+            ${c.icon}
+          </div>
+          <div class="flex-1">
+            <div class="font-medium">${c.name}</div>
+            <div class="text-xs text-text-muted">${c.transaction_count || 0} 笔交易</div>
+          </div>
+          <button class="p-2 hover:bg-surface-cream rounded-full" onclick="event.stopPropagation(); deleteCategory(${c.id})">
+            <span class="material-symbols-outlined text-text-muted">delete</span>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // ============ Modal ============
+    function showAddModal() {
+      document.getElementById('category-id').value = '';
+      document.getElementById('category-name').value = '';
+      selectedType = 1;
+      selectedIcon = '💰';
+      selectedColor = '#FF6B6B';
+
+      updateTypeButtons();
+      updateIconSelection();
+      updateColorSelection();
+
+      document.getElementById('modal-title').textContent = '添加分类';
+      document.getElementById('add-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    async function editCategory(id) {
+      const allCategories = [...expenseCategories, ...incomeCategories];
+      const category = allCategories.find(c => c.id === id);
+      if (!category) return;
+
+      document.getElementById('category-id').value = category.id;
+      document.getElementById('category-name').value = category.name;
+      selectedType = category.type;
+      selectedIcon = category.icon;
+      selectedColor = category.color;
+
+      updateTypeButtons();
+      updateIconSelection();
+      updateColorSelection();
+
+      document.getElementById('modal-title').textContent = '编辑分类';
+      document.getElementById('add-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function selectType(type) {
+      selectedType = type;
+      updateTypeButtons();
+    }
+
+    function updateTypeButtons() {
+      const expenseBtn = document.getElementById('type-expense');
+      const incomeBtn = document.getElementById('type-income');
+
+      if (selectedType === 1) {
+        expenseBtn.classList.add('bg-expense-coral', 'text-white', 'border-expense-coral');
+        expenseBtn.classList.remove('bg-surface-cream', 'text-text-secondary', 'border-transparent');
+        incomeBtn.classList.remove('bg-income-mint', 'text-white', 'border-income-mint');
+        incomeBtn.classList.add('bg-surface-cream', 'text-text-secondary', 'border-transparent');
+      } else {
+        incomeBtn.classList.add('bg-income-mint', 'text-white', 'border-income-mint');
+        incomeBtn.classList.remove('bg-surface-cream', 'text-text-secondary', 'border-transparent');
+        expenseBtn.classList.remove('bg-expense-coral', 'text-white', 'border-expense-coral');
+        expenseBtn.classList.add('bg-surface-cream', 'text-text-secondary', 'border-transparent');
+      }
+    }
+
+    function selectIcon(btn) {
+      document.querySelectorAll('.icon-btn').forEach(b => {
+        b.classList.remove('bg-secondary-fixed', 'border-2', 'border-primary');
+      });
+      btn.classList.add('bg-secondary-fixed', 'border-2', 'border-primary');
+      selectedIcon = btn.dataset.icon;
+    }
+
+    function updateIconSelection() {
+      document.querySelectorAll('.icon-btn').forEach(btn => {
+        if (btn.dataset.icon === selectedIcon) {
+          btn.classList.add('bg-secondary-fixed', 'border-2', 'border-primary');
+        } else {
+          btn.classList.remove('bg-secondary-fixed', 'border-2', 'border-primary');
+        }
+      });
+    }
+
+    function selectColor(btn) {
+      document.querySelectorAll('.color-btn').forEach(b => {
+        b.classList.remove('border-primary', 'scale-110');
+        b.classList.add('border-transparent');
+      });
+      btn.classList.remove('border-transparent');
+      btn.classList.add('border-primary', 'scale-110');
+      selectedColor = btn.dataset.color;
+    }
+
+    function updateColorSelection() {
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        if (btn.dataset.color === selectedColor) {
+          btn.classList.add('border-primary', 'scale-110');
+          btn.classList.remove('border-transparent');
+        } else {
+          btn.classList.remove('border-primary', 'scale-110');
+          btn.classList.add('border-transparent');
+        }
+      });
+    }
+
+    // Form submit
+    document.getElementById('category-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const id = document.getElementById('category-id').value;
+      const name = document.getElementById('category-name').value.trim();
+
+      if (!name) {
+        showToast('请输入分类名称', 'error');
+        return;
+      }
+
+      const data = {
+        type: selectedType,
+        name,
+        icon: selectedIcon,
+        color: selectedColor
+      };
+
+      try {
+        if (id) {
+          await API.Category.update(id, data);
+          showToast('更新成功', 'success');
+        } else {
+          await API.Category.create(data);
+          showToast('添加成功', 'success');
+        }
+
+        closeAddModal();
+        loadCategories();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    });
+
+    async function deleteCategory(id) {
+      const confirmed = await Utils.confirm('确定要删除这个分类吗？删除后使用该分类的记录将变为"未分类"。');
+      if (!confirmed) return;
+
+      try {
+        await API.Category.delete(id);
+        showToast('删除成功', 'success');
+        loadCategories();
+      } catch (e) {
+        showToast('删除失败: ' + e.message, 'error');
+      }
+    }
+
+    // ============ Initialize ============
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkAuth()) return;
+      loadCategories();
+    });
+  </script>
+</body>
+</html>

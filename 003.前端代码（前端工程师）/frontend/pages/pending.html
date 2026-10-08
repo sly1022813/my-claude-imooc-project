@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>待收/待付 - 轻记账</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#9b3f5a",
+            "income-mint": "#7ED7C1",
+            "expense-coral": "#FF6B6B",
+            "pending-amber": "#FFB347",
+            "surface-cream": "#FFF5F7",
+            "surface-card": "#FFFFFF",
+            "border-soft": "#FFE4E8",
+            "text-secondary": "#666666",
+            "text-muted": "#999999",
+            "on-primary": "#ffffff",
+            "on-surface": "#1b1c1c",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f0eded",
+            "secondary-fixed": "#ffd9e1",
+            "secondary-container": "#fdb2c5",
+            "on-secondary-container": "#7a4151",
+            "on-surface-variant": "#544245",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'Space Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined'; }
+  </style>
+</head>
+<body class="bg-surface-cream text-on-surface min-h-screen pb-20">
+  <!-- Header -->
+  <header class="bg-surface-card border-b border-border-soft px-4 py-3 sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      <a href="mine.html" class="p-2 -ml-2 hover:bg-surface-cream rounded-full">
+        <span class="material-symbols-outlined text-xl text-on-surface-variant">arrow_back</span>
+      </a>
+      <h1 class="font-semibold text-lg">待收/待付</h1>
+      <div class="w-10"></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
+    <!-- Summary Cards -->
+    <section class="grid grid-cols-2 gap-3">
+      <div class="bg-surface-card rounded-xl p-4 border border-border-soft">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-lg text-income-mint">call_received</span>
+          <span class="text-xs text-text-secondary">待收款</span>
+        </div>
+        <div class="text-xl font-bold font-mono text-income-mint" id="stat-receivable">¥0.00</div>
+        <div class="text-xs text-text-muted mt-1" id="stat-receivable-count">0 笔</div>
+      </div>
+      <div class="bg-surface-card rounded-xl p-4 border border-border-soft">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-lg text-expense-coral">call_made</span>
+          <span class="text-xs text-text-secondary">待付款</span>
+        </div>
+        <div class="text-xl font-bold font-mono text-expense-coral" id="stat-payable">¥0.00</div>
+        <div class="text-xs text-text-muted mt-1" id="stat-payable-count">0 笔</div>
+      </div>
+    </section>
+
+    <!-- Tab Navigation -->
+    <div class="flex p-1 bg-surface-card rounded-full border border-border-soft">
+      <button class="flex-1 py-2 text-center rounded-full font-semibold text-sm transition-all bg-income-mint text-white" id="tab-receivable" onclick="switchTab('receivable')">
+        待收款
+      </button>
+      <button class="flex-1 py-2 text-center rounded-full font-semibold text-sm transition-all text-text-secondary" id="tab-payable" onclick="switchTab('payable')">
+        待付款
+      </button>
+    </div>
+
+    <!-- List -->
+    <section class="bg-surface-card rounded-xl border border-border-soft overflow-hidden" id="list-container">
+      <div class="p-8 text-center text-text-muted">
+        <span class="material-symbols-outlined text-4xl animate-pulse">hourglass_empty</span>
+        <p class="mt-2">加载中...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-surface-card border-t border-border-soft">
+    <div class="max-w-2xl mx-auto flex justify-around py-2">
+      <a href="index.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">home</span>
+        <span class="text-xs mt-1">首页</span>
+      </a>
+      <a href="records.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">receipt_long</span>
+        <span class="text-xs mt-1">记录</span>
+      </a>
+      <a href="#" class="flex flex-col items-center p-2 -mt-6">
+        <div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
+          <span class="material-symbols-outlined text-3xl text-white">add</span>
+        </div>
+      </a>
+      <a href="customers.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">group</span>
+        <span class="text-xs mt-1">客户</span>
+      </a>
+      <a href="mine.html" class="flex flex-col items-center p-2 text-text-secondary">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        <span class="text-xs mt-1">我的</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none;"></div>
+
+  <!-- Scripts -->
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    let currentTab = 'receivable';
+    let receivableList = [];
+    let payableList = [];
+
+    // ============ Toast ============
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColors = {
+        success: 'bg-income-mint',
+        error: 'bg-expense-coral',
+        warning: 'bg-pending-amber',
+        info: 'bg-primary'
+      };
+      toast.className = `${bgColors[type]} text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ============ Check Auth ============
+    function checkAuth() {
+      if (!API.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // ============ Tab Switching ============
+    function switchTab(tab) {
+      currentTab = tab;
+
+      const receivableTab = document.getElementById('tab-receivable');
+      const payableTab = document.getElementById('tab-payable');
+
+      if (tab === 'receivable') {
+        receivableTab.classList.add('bg-income-mint', 'text-white');
+        receivableTab.classList.remove('text-text-secondary');
+        payableTab.classList.remove('bg-expense-coral', 'text-white');
+        payableTab.classList.add('text-text-secondary');
+      } else {
+        payableTab.classList.add('bg-expense-coral', 'text-white');
+        payableTab.classList.remove('text-text-secondary');
+        receivableTab.classList.remove('bg-income-mint', 'text-white');
+        receivableTab.classList.add('text-text-secondary');
+      }
+
+      renderList();
+    }
+
+    // ============ Load Data ============
+    async function loadData() {
+      if (!checkAuth()) return;
+
+      try {
+        const [receivableRes, payableRes] = await Promise.all([
+          API.Transaction.getPending(1), // type 1 = receivable
+          API.Transaction.getPending(2)  // type 2 = payable
+        ]);
+
+        receivableList = receivableRes.data || [];
+        payableList = payableRes.data || [];
+
+        // Update stats
+        const receivableTotal = receivableList.reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+        const payableTotal = payableList.reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+
+        document.getElementById('stat-receivable').textContent = `¥${Utils.formatAmount(receivableTotal)}`;
+        document.getElementById('stat-receivable-count').textContent = `${receivableList.length} 笔`;
+        document.getElementById('stat-payable').textContent = `¥${Utils.formatAmount(payableTotal)}`;
+        document.getElementById('stat-payable-count').textContent = `${payableList.length} 笔`;
+
+        renderList();
+      } catch (e) {
+        console.error('加载数据失败:', e);
+        showToast('加载数据失败', 'error');
+      }
+    }
+
+    function renderList() {
+      const container = document.getElementById('list-container');
+      const list = currentTab === 'receivable' ? receivableList : payableList;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-text-muted">
+            <span class="material-symbols-outlined text-4xl">check_circle</span>
+            <p class="mt-2">暂无${currentTab === 'receivable' ? '待收款' : '待付款'}记录</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(tx => `
+        <div class="p-4 flex items-center gap-3 hover:bg-surface-cream transition-colors border-b border-border-soft last:border-b-0">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl" style="background-color: ${tx.category_color}20">
+            ${tx.category_icon}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-medium truncate">${tx.counterparty || tx.category_name}</div>
+            <div class="text-xs text-text-muted flex items-center gap-2">
+              <span>${tx.date}</span>
+              <span>·</span>
+              <span>${tx.category_name}</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="font-mono font-semibold ${tx.type === 1 ? 'text-expense-coral' : 'text-income-mint'}">
+              ${tx.type === 1 ? '-' : '+'}¥${Utils.formatAmount(tx.amount)}
+            </div>
+            <button class="text-xs text-primary hover:underline mt-1" onclick="settleTransaction(${tx.id})">
+              确认收讫
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function settleTransaction(id) {
+      const confirmed = await Utils.confirm('确认已收到/支付这笔款项？');
+      if (!confirmed) return;
+
+      try {
+        await API.Transaction.settle(id);
+        showToast('操作成功', 'success');
+        loadData();
+      } catch (e) {
+        showToast('操作失败: ' + e.message, 'error');
+      }
+    }
+
+    // ============ Initialize ============
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 - 轻记账</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#9b3f5a",
+            "income-mint": "#7ED7C1",
+            "expense-coral": "#FF6B6B",
+            "pending-amber": "#FFB347",
+            "surface-cream": "#FFF5F7",
+            "surface-card": "#FFFFFF",
+            "border-soft": "#FFE4E8",
+            "text-secondary": "#666666",
+            "text-muted": "#999999",
+            "on-primary": "#ffffff",
+            "on-surface": "#1b1c1c",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f0eded",
+            "secondary-fixed": "#ffd9e1",
+            "secondary-container": "#fdb2c5",
+            "on-secondary-container": "#7a4151",
+            "on-surface-variant": "#544245",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'Space Mono', monospace; }
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined'; }
+  </style>
+</head>
+<body class="bg-surface-cream text-on-surface min-h-screen flex flex-col justify-between">
+  <!-- Header -->
+  <div class="w-full flex justify-center pt-8 px-4">
+    <header class="flex items-center gap-2">
+      <img alt="轻记账" class="h-8 w-auto object-contain" src="https://via.placeholder.com/32/FF8FAB/FFFFFF?text=轻">
+      <span class="font-bold text-xl tracking-tight text-primary">轻记账</span>
+    </header>
+  </div>
+
+  <!-- Main Content -->
+  <main class="w-full flex-1 flex flex-col items-center justify-center px-4 py-8">
+    <div class="w-full max-w-md">
+      <div class="w-full max-w-md mx-auto">
+        <div class="w-full bg-surface-card rounded-xl p-6 lg:p-8 shadow-lg relative">
+
+          <!-- Segmented Tab Navigation -->
+          <div class="flex p-1 bg-surface-cream rounded-full mb-6 relative" role="tablist">
+            <button class="flex-1 py-2 text-center rounded-full font-semibold text-sm transition-all duration-200 bg-surface-card text-primary shadow-sm"
+                    id="tab-login-btn" type="button">
+              账号登录
+            </button>
+            <button class="flex-1 py-2 text-center rounded-full font-semibold text-sm transition-all duration-200 text-text-secondary hover:text-on-surface"
+                    id="tab-register-btn" type="button">
+              免费注册
+            </button>
+          </div>
+
+          <!-- LOGIN SECTION -->
+          <div class="space-y-4" id="section-login">
+            <div class="space-y-1">
+              <h2 class="text-2xl font-bold text-on-surface">欢迎回来</h2>
+              <p class="text-sm text-text-muted">输入账本通行证，即刻开始今天的财务打理</p>
+            </div>
+
+            <form class="space-y-4 mt-4" id="login-form">
+              <!-- Username -->
+              <div class="space-y-1">
+                <label class="block text-sm font-medium text-on-surface-variant">用户名</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-text-muted text-lg pointer-events-none">person</span>
+                  <input class="w-full h-11 pl-10 pr-3 rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-text-muted text-sm focus:bg-surface-cream transition-colors duration-150 outline-none border border-transparent focus:border-primary"
+                         id="login-username" placeholder="请输入用户名" type="text" required>
+                </div>
+              </div>
+
+              <!-- Password -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center">
+                  <label class="block text-sm font-medium text-on-surface-variant">账户密码</label>
+                  <a class="text-sm text-primary hover:underline" href="#">忘记密码？</a>
+                </div>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-text-muted text-lg pointer-events-none">lock</span>
+                  <input class="w-full h-11 pl-10 pr-10 rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-text-muted text-sm focus:bg-surface-cream transition-colors duration-150 outline-none border border-transparent focus:border-primary"
+                         id="login-password" placeholder="请输入密码" type="password" required>
+                  <button class="absolute right-3 text-text-muted hover:text-on-surface focus:outline-none flex items-center"
+                          onclick="togglePasswordVisibility('login-password', this)" type="button">
+                    <span class="material-symbols-outlined text-lg">visibility</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Error Message -->
+              <div class="hidden text-expense-coral text-sm" id="login-error"></div>
+
+              <!-- Submit Button -->
+              <button class="w-full h-11 mt-2 bg-primary hover:bg-opacity-90 text-white font-semibold rounded-lg shadow-md active:scale-95 transition-all duration-150 flex items-center justify-center gap-2"
+                      id="login-submit" type="submit">
+                <span class="">登 录</span>
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+              </button>
+            </form>
+
+            <!-- Demo Button -->
+            <div class="pt-2 text-center">
+              <button class="w-full py-2.5 px-4 rounded-lg bg-secondary-fixed/50 hover:bg-secondary-fixed text-primary font-semibold text-sm transition-colors flex items-center justify-center gap-1.5"
+                      id="demo-btn" type="button">
+                <span class="material-symbols-outlined text-lg">local_cafe</span>
+                <span>免注册体验演示 Demo 模式</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- REGISTER SECTION -->
+          <div class="space-y-4 hidden" id="section-register">
+            <div class="space-y-1">
+              <h2 class="text-2xl font-bold text-on-surface">创建新账本</h2>
+              <p class="text-sm text-text-muted">注册只需半分钟，开启井井有条的财务生活</p>
+            </div>
+
+            <form class="space-y-3 mt-4" id="register-form">
+              <!-- Username -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="block text-sm font-medium text-on-surface-variant">用户名</label>
+                  <span class="text-sm text-text-muted flex items-center gap-1" id="username-status">
+                    <span class="material-symbols-outlined text-sm">help</span>
+                  </span>
+                </div>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-text-muted text-lg pointer-events-none">badge</span>
+                  <input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-text-muted text-sm focus:bg-surface-cream transition-colors duration-150 outline-none border border-transparent focus:border-primary"
+                         id="reg-username" placeholder="3-20位字母数字，字母开头" type="text" required>
+                </div>
+              </div>
+
+              <!-- Password -->
+              <div class="space-y-1">
+                <label class="block text-sm font-medium text-on-surface-variant">设置密码</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-text-muted text-lg pointer-events-none">lock</span>
+                  <input class="w-full h-10 pl-10 pr-10 rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-text-muted text-sm focus:bg-surface-cream transition-colors duration-150 outline-none border border-transparent focus:border-primary"
+                         id="reg-password" placeholder="6-20位字符" type="password" required>
+                  <button class="absolute right-3 text-text-muted hover:text-on-surface focus:outline-none flex items-center"
+                          onclick="togglePasswordVisibility('reg-password', this)" type="button">
+                    <span class="material-symbols-outlined text-lg">visibility</span>
+                  </button>
+                </div>
+                <!-- Strength Bar -->
+                <div class="pt-1 space-y-1">
+                  <div class="flex gap-1 h-1.5 w-full rounded-full overflow-hidden bg-gray-200">
+                    <div class="flex-1 rounded-full bg-gray-200 transition-colors" id="strength-1"></div>
+                    <div class="flex-1 rounded-full bg-gray-200 transition-colors" id="strength-2"></div>
+                    <div class="flex-1 rounded-full bg-gray-200 transition-colors" id="strength-3"></div>
+                  </div>
+                  <div class="flex justify-between items-center text-right">
+                    <span class="text-xs text-text-muted">安全强度</span>
+                    <span class="text-xs font-semibold" id="strength-text">请设置密码</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Confirm Password -->
+              <div class="space-y-1">
+                <label class="block text-sm font-medium text-on-surface-variant">确认密码</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-text-muted text-lg pointer-events-none">lock</span>
+                  <input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-text-muted text-sm focus:bg-surface-cream transition-colors duration-150 outline-none border border-transparent focus:border-primary"
+                         id="reg-confirm-password" placeholder="请再次输入相同密码" type="password" required>
+                </div>
+                <div class="hidden text-xs text-expense-coral" id="password-match-error">两次输入的密码不一致</div>
+              </div>
+
+              <!-- User Type -->
+              <div class="space-y-1 pt-1">
+                <label class="block text-sm font-medium text-on-surface-variant">用户类型</label>
+                <div class="grid grid-cols-3 gap-2" id="user-role-selector">
+                  <button class="role-btn p-2 rounded-lg bg-surface-cream text-primary text-sm font-semibold flex flex-col items-center justify-center gap-1 transition-all border-2 border-primary"
+                          data-role="1" data-role-name="个人记账" type="button">
+                    <span class="material-symbols-outlined text-lg">person</span>
+                    <span class="text-xs">个人记账</span>
+                  </button>
+                  <button class="role-btn p-2 rounded-lg bg-surface-container-lowest text-text-secondary text-sm flex flex-col items-center justify-center gap-1 transition-all border-2 border-transparent hover:border-primary"
+                          data-role="2" data-role-name="个体商户" type="button">
+                    <span class="material-symbols-outlined text-lg">store</span>
+                    <span class="text-xs">个体商户</span>
+                  </button>
+                  <button class="role-btn p-2 rounded-lg bg-surface-container-lowest text-text-secondary text-sm flex flex-col items-center justify-center gap-1 transition-all border-2 border-transparent hover:border-primary"
+                          data-role="3" data-role-name="小微企业" type="button">
+                    <span class="material-symbols-outlined text-lg">domain</span>
+                    <span class="text-xs">小微企业</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Error Message -->
+              <div class="hidden text-expense-coral text-sm" id="register-error"></div>
+
+              <!-- Submit Button -->
+              <button class="w-full h-11 mt-2 bg-primary hover:bg-opacity-90 text-white font-semibold rounded-lg shadow-md active:scale-95 transition-all duration-150 flex items-center justify-center gap-2"
+                      id="register-submit" type="submit">
+                <span class="">立即注册并进入系统</span>
+                <span class="material-symbols-outlined text-lg">check</span>
+              </button>
+            </form>
+
+            <!-- Agreement -->
+            <p class="text-xs text-text-muted text-center pt-1">
+              注册即代表您同意
+              <a class="text-primary hover:underline" href="#">《用户服务协议》</a>与
+              <a class="text-primary hover:underline" href="#">《隐私保护政策》</a>
+            </p>
+          </div>
+
+          <!-- Security Badge -->
+          <div class="mt-6 pt-4 border-t border-border-soft flex items-center justify-center gap-4 text-text-muted text-xs">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm text-income-mint">lock</span>
+              <span>数据加密</span>
+            </span>
+            <span>·</span>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm text-income-mint">cloud_done</span>
+              <span>云端同步</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full py-6 px-4 text-center">
+    <div class="flex flex-wrap items-center justify-center gap-3 text-xs text-text-muted">
+      <a class="hover:text-primary transition-colors" href="#">服务条款</a>
+      <span>·</span>
+      <a class="hover:text-primary transition-colors" href="#">隐私权政策</a>
+      <span>·</span>
+      <span>轻记账 v1.0</span>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none;"></div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script>
+    // ============ Tab Switching ============
+    const loginBtn = document.getElementById('tab-login-btn');
+    const registerBtn = document.getElementById('tab-register-btn');
+    const loginSection = document.getElementById('section-login');
+    const registerSection = document.getElementById('section-register');
+
+    loginBtn.addEventListener('click', () => {
+      loginBtn.classList.add('bg-surface-card', 'text-primary', 'shadow-sm');
+      loginBtn.classList.remove('text-text-secondary');
+      registerBtn.classList.remove('bg-surface-card', 'text-primary', 'shadow-sm');
+      registerBtn.classList.add('text-text-secondary');
+      loginSection.classList.remove('hidden');
+      registerSection.classList.add('hidden');
+    });
+
+    registerBtn.addEventListener('click', () => {
+      registerBtn.classList.add('bg-surface-card', 'text-primary', 'shadow-sm');
+      registerBtn.classList.remove('text-text-secondary');
+      loginBtn.classList.remove('bg-surface-card', 'text-primary', 'shadow-sm');
+      loginBtn.classList.add('text-text-secondary');
+      registerSection.classList.remove('hidden');
+      loginSection.classList.add('hidden');
+    });
+
+    // ============ Password Visibility Toggle ============
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
+
+    // ============ Toast Function ============
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColors = {
+        success: 'bg-income-mint',
+        error: 'bg-expense-coral',
+        warning: 'bg-pending-amber',
+        info: 'bg-primary'
+      };
+      toast.className = `${bgColors[type]} text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ============ Role Selector ============
+    let selectedUserType = 1;
+    const roleButtons = document.querySelectorAll('.role-btn');
+    roleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        roleButtons.forEach(b => {
+          b.classList.remove('bg-surface-cream', 'text-primary', 'font-semibold', 'border-primary');
+          b.classList.add('bg-surface-container-lowest', 'text-text-secondary', 'border-transparent');
+        });
+        btn.classList.add('bg-surface-cream', 'text-primary', 'font-semibold', 'border-primary');
+        btn.classList.remove('bg-surface-container-lowest', 'text-text-secondary', 'border-transparent');
+        selectedUserType = parseInt(btn.dataset.role);
+      });
+    });
+
+    // ============ Username Validation ============
+    const regUsername = document.getElementById('reg-username');
+    const usernameStatus = document.getElementById('username-status');
+    let usernameTimeout;
+
+    regUsername.addEventListener('input', () => {
+      clearTimeout(usernameTimeout);
+      const username = regUsername.value.trim();
+
+      if (username.length < 3) {
+        usernameStatus.innerHTML = '<span class="text-text-muted">至少3个字符</span>';
+        return;
+      }
+
+      usernameStatus.innerHTML = '<span class="text-text-muted">检查中...</span>';
+
+      usernameTimeout = setTimeout(async () => {
+        try {
+          const res = await API.Auth.checkUsername(username);
+          if (res.data.available) {
+            usernameStatus.innerHTML = '<span class="text-income-mint font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> 可用</span>';
+          } else {
+            usernameStatus.innerHTML = '<span class="text-expense-coral font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">error</span> 已被占用</span>';
+          }
+        } catch (e) {
+          usernameStatus.innerHTML = '<span class="text-text-muted">请输入用户名</span>';
+        }
+      }, 500);
+    });
+
+    // ============ Password Strength ============
+    const regPassword = document.getElementById('reg-password');
+    const regConfirmPassword = document.getElementById('reg-confirm-password');
+    const passwordMatchError = document.getElementById('password-match-error');
+    const strengthText = document.getElementById('strength-text');
+    const strengthBars = [
+      document.getElementById('strength-1'),
+      document.getElementById('strength-2'),
+      document.getElementById('strength-3')
+    ];
+
+    function checkPasswordStrength(password) {
+      let strength = 0;
+      if (password.length >= 6) strength++;
+      if (password.length >= 8) strength++;
+      if (/[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password)) strength++;
+      return Math.min(strength, 3);
+    }
+
+    function updatePasswordStrength(strength) {
+      const colors = ['bg-gray-200', 'bg-expense-coral', 'bg-pending-amber', 'bg-income-mint'];
+      const texts = ['太弱', '弱', '中等', '强'];
+
+      strengthBars.forEach((bar, i) => {
+        bar.className = `flex-1 rounded-full transition-colors ${i < strength ? colors[strength] : 'bg-gray-200'}`;
+      });
+
+      if (strength > 0) {
+        strengthText.textContent = texts[strength];
+        strengthText.className = `text-xs font-semibold ${strength >= 3 ? 'text-income-mint' : strength >= 2 ? 'text-pending-amber' : 'text-expense-coral'}`;
+      } else {
+        strengthText.textContent = '请设置密码';
+        strengthText.className = 'text-xs text-text-muted';
+      }
+    }
+
+    regPassword.addEventListener('input', () => {
+      updatePasswordStrength(checkPasswordStrength(regPassword.value));
+      checkPasswordMatch();
+    });
+
+    function checkPasswordMatch() {
+      const password = regPassword.value;
+      const confirm = regConfirmPassword.value;
+
+      if (confirm && password !== confirm) {
+        passwordMatchError.classList.remove('hidden');
+        regConfirmPassword.classList.add('border-expense-coral');
+      } else {
+        passwordMatchError.classList.add('hidden');
+        regConfirmPassword.classList.remove('border-expense-coral');
+      }
+    }
+
+    regConfirmPassword.addEventListener('input', checkPasswordMatch);
+
+    // ============ Login Form ============
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+    const loginSubmit = document.getElementById('login-submit');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.classList.add('hidden');
+      loginSubmit.disabled = true;
+      loginSubmit.innerHTML = '<span class="animate-spin material-symbols-outlined text-lg">progress_activity</span>';
+
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const res = await API.Auth.login({ username, password });
+        API.saveAuth(res.data.token, res.data.user);
+        showToast('登录成功！', 'success');
+        setTimeout(() => window.location.href = 'index.html', 500);
+      } catch (e) {
+        loginError.textContent = e.message;
+        loginError.classList.remove('hidden');
+      } finally {
+        loginSubmit.disabled = false;
+        loginSubmit.innerHTML = '<span class="">登 录</span><span class="material-symbols-outlined text-lg">arrow_forward</span>';
+      }
+    });
+
+    // ============ Register Form ============
+    const registerForm = document.getElementById('register-form');
+    const registerError = document.getElementById('register-error');
+    const registerSubmit = document.getElementById('register-submit');
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      registerError.classList.add('hidden');
+
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+      // Validation
+      if (password !== confirmPassword) {
+        registerError.textContent = '两次输入的密码不一致';
+        registerError.classList.remove('hidden');
+        return;
+      }
+
+      if (password.length < 6) {
+        registerError.textContent = '密码至少6个字符';
+        registerError.classList.remove('hidden');
+        return;
+      }
+
+      registerSubmit.disabled = true;
+      registerSubmit.innerHTML = '<span class="animate-spin material-symbols-outlined text-lg">progress_activity</span>';
+
+      try {
+        const res = await API.Auth.register({
+          username,
+          password,
+          confirmPassword,
+          userType: selectedUserType
+        });
+        API.saveAuth(res.data.token, res.data.user);
+        showToast('注册成功！', 'success');
+        setTimeout(() => window.location.href = 'index.html', 500);
+      } catch (e) {
+        registerError.textContent = e.message;
+        registerError.classList.remove('hidden');
+      } finally {
+        registerSubmit.disabled = false;
+        registerSubmit.innerHTML = '<span class="">立即注册并进入系统</span><span class="material-symbols-outlined text-lg">check</span>';
+      }
+    });
+
+    // ============ Demo Button ============
+    document.getElementById('demo-btn').addEventListener('click', () => {
+      document.getElementById('login-username').value = 'root';
+      document.getElementById('login-password').value = 'root';
+    });
+
+    // ============ Check if already logged in ============
+    if (API.isLoggedIn()) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
