@@ -163,7 +163,19 @@ const TransactionAPI = {
   getPending: (type) => get('/api/transactions/pending', { type }),
 
   // 收讫处理
-  settle: (id) => post(`/api/transactions/${id}/settle`)
+  settle: (id) => post(`/api/transactions/${id}/settle`),
+
+  // 首页数据
+  getHomeData: (year, month) => get('/api/transactions/home', { year, month }),
+
+  // 年度统计
+  getYearlyStats: (year) => get('/api/transactions/stats/yearly', { year }),
+
+  // 年度月度趋势
+  getYearlyMonthlyTrend: (year) => get('/api/transactions/stats/yearly-monthly', { year }),
+
+  // 年度收支记录列表
+  getYearlyList: (year, params) => get('/api/transactions/yearly-list', { year, ...params })
 };
 
 // ============ 客户 API ============

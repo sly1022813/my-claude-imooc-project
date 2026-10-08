@@ -266,6 +266,154 @@ async function getPendingList(req, res, next) {
 }
 
 /**
+ * 获取首页数据
+ * GET /api/transactions/home
+ */
+async function getHomeData(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const now = new Date();
+    const year = parseInt(req.query.year) || now.getFullYear();
+    const month = parseInt(req.query.month) || (now.getMonth() + 1);
+
+    // 当月统计
+    const yearMonth = `${year}-${String(month).padStart(2, '0')}`;
+    const stats = await TransactionModel.getMonthlyStats(userId, yearMonth);
+
+    // 本月支出最多的3个分类
+    const topExpenseCategories = (stats.categoryStats || [])
+      .filter(c => c.type === 1)
+      .sort((a, b) => parseFloat(b.total_amount) - parseFloat(a.total_amount))
+      .slice(0, 3)
+      .map(c => ({
+        category_id: c.category_id,
+        category_name: c.category_name,
+        category_icon: c.category_icon,
+        category_color: c.category_color,
+        total: c.total_amount,
+        transaction_count: c.transaction_count
+      }));
+
+    // 最近3条记账记录
+    const recentTransactions = await TransactionModel.getList(userId, {
+      page: 1,
+      pageSize: 3,
+      startDate: `${yearMonth}-01`,
+      endDate: `${yearMonth}-31`
+    });
+
+    return success(res, {
+      year,
+      month,
+      yearMonth,
+      totalIncome: stats.total_income || 0,
+      totalExpense: stats.total_expense || 0,
+      netProfit: stats.net_profit || 0,
+      topExpenseCategories,
+      recentTransactions: recentTransactions.list
+    }, '获取成功');
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * 获取年度统计
+ * GET /api/transactions/stats/yearly
+ */
+async function getYearlyStats(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+
+    const stats = await TransactionModel.getYearlyStats(userId, year);
+
+    // 按类型分组分类统计
+    const expenseByCategory = (stats.categoryStats || [])
+      .filter(c => c.type === 1)
+      .map(c => ({
+        category_id: c.category_id,
+        category_name: c.category_name,
+        category_icon: c.category_icon,
+        category_color: c.category_color,
+        total: c.total_amount
+      }));
+
+    const incomeByCategory = (stats.categoryStats || [])
+      .filter(c => c.type === 2)
+      .map(c => ({
+        category_id: c.category_id,
+        category_name: c.category_name,
+        category_icon: c.category_icon,
+        category_color: c.category_color,
+        total: c.total_amount
+      }));
+
+    return success(res, {
+      year,
+      totalExpense: stats.total_expense || 0,
+      totalIncome: stats.total_income || 0,
+      netProfit: stats.net_profit || 0,
+      expenseCount: stats.expense_count || 0,
+      incomeCount: stats.income_count || 0,
+      expenseByCategory,
+      incomeByCategory
+    }, '获取成功');
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * 获取年度月度趋势
+ * GET /api/transactions/stats/yearly-monthly
+ */
+async function getYearlyMonthlyTrend(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+
+    const trend = await TransactionModel.getYearlyMonthlyTrend(userId, year);
+
+    return success(res, {
+      year,
+      data: trend
+    }, '获取成功');
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * 获取年度收支记录列表
+ * GET /api/transactions/yearly-list
+ */
+async function getYearlyList(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 50;
+    const type = req.query.type ? parseInt(req.query.type) : null;
+
+    const result = await TransactionModel.getYearlyList(userId, year, { page, pageSize, type });
+
+    return success(res, {
+      year,
+      list: result.list,
+      pagination: {
+        total: result.total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(result.total / pageSize)
+      }
+    }, '获取成功');
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * 收讫处理
  * POST /api/transactions/:id/settle
  */
@@ -294,5 +442,9 @@ module.exports = {
   getMonthlyStats,
   getDailyTrend,
   getPendingList,
-  settle
+  settle,
+  getHomeData,
+  getYearlyStats,
+  getYearlyMonthlyTrend,
+  getYearlyList
 };

@@ -33,6 +33,34 @@ router.get('/stats/monthly', asyncHandler(TransactionController.getMonthlyStats)
 router.get('/stats/daily-trend', asyncHandler(TransactionController.getDailyTrend));
 
 /**
+ * @route   GET /api/transactions/home
+ * @desc    获取首页数据
+ * @access  Private
+ */
+router.get('/home', asyncHandler(TransactionController.getHomeData));
+
+/**
+ * @route   GET /api/transactions/stats/yearly
+ * @desc    获取年度统计
+ * @access  Private
+ */
+router.get('/stats/yearly', asyncHandler(TransactionController.getYearlyStats));
+
+/**
+ * @route   GET /api/transactions/stats/yearly-monthly
+ * @desc    获取年度月度趋势
+ * @access  Private
+ */
+router.get('/stats/yearly-monthly', asyncHandler(TransactionController.getYearlyMonthlyTrend));
+
+/**
+ * @route   GET /api/transactions/yearly-list
+ * @desc    获取年度收支记录列表
+ * @access  Private
+ */
+router.get('/yearly-list', asyncHandler(TransactionController.getYearlyList));
+
+/**
  * @route   GET /api/transactions/pending
  * @desc    获取待收/待付款列表
  * @access  Private

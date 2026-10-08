@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>记录 - 轻记账</title>
+  <title>明细 - 轻记账</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -48,28 +48,29 @@
       <a href="index.html" class="p-2 -ml-2 hover:bg-surface-cream rounded-full">
         <span class="material-symbols-outlined text-xl text-on-surface-variant">arrow_back</span>
       </a>
-      <h1 class="font-semibold text-lg">收支记录</h1>
-      <button class="p-2 -mr-2 hover:bg-surface-cream rounded-full" onclick="showFilterModal()">
-        <span class="material-symbols-outlined text-xl text-on-surface-variant">filter_list</span>
-      </button>
+      <h1 class="font-semibold text-lg">明细</h1>
+      <div class="w-10"></div>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="max-w-2xl mx-auto px-4 py-4">
-    <!-- Filter Summary -->
-    <div class="flex items-center justify-between mb-4">
-      <div class="text-sm text-text-muted" id="filter-summary">全部记录</div>
-      <div class="flex items-center gap-2">
-        <select id="type-filter" class="text-sm px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft outline-none" onchange="applyFilters()">
-          <option value="">全部类型</option>
-          <option value="1">支出</option>
-          <option value="2">收入</option>
-        </select>
+  <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
+    <!-- Year & Type Filter -->
+    <div class="flex items-center gap-3">
+      <!-- Year Selector -->
+      <select id="year-filter" class="flex-1 h-12 px-4 rounded-lg bg-surface-card border border-border-soft outline-none text-center font-medium">
+        <!-- 由JS生成 -->
+      </select>
+
+      <!-- Type Filter -->
+      <div class="flex-1 flex rounded-lg bg-surface-card border border-border-soft overflow-hidden">
+        <button class="type-btn flex-1 py-3 text-sm font-medium border-r border-border-soft last:border-r-0" data-type="" onclick="selectType(this)">全部</button>
+        <button class="type-btn flex-1 py-3 text-sm font-medium border-r border-border-soft last:border-r-0 text-expense-coral" data-type="1" onclick="selectType(this)">支出</button>
+        <button class="type-btn flex-1 py-3 text-sm font-medium text-income-mint" data-type="2" onclick="selectType(this)">收入</button>
       </div>
     </div>
 
-    <!-- Records List -->
+    <!-- Records List Grouped by Month -->
     <section class="bg-surface-card rounded-xl border border-border-soft overflow-hidden" id="records-container">
       <div class="p-8 text-center text-text-muted">
         <span class="material-symbols-outlined text-4xl animate-pulse">hourglass_empty</span>
@@ -77,8 +78,12 @@
       </div>
     </section>
 
-    <!-- Pagination -->
-    <div class="flex items-center justify-center gap-2 mt-4" id="pagination"></div>
+    <!-- Load More -->
+    <div class="text-center" id="load-more-container" style="display: none;">
+      <button class="px-6 py-2 rounded-full bg-surface-card border border-border-soft text-sm" onclick="loadMore()">
+        加载更多
+      </button>
+    </div>
   </main>
 
   <!-- Bottom Navigation -->
@@ -90,9 +95,9 @@
       </a>
       <a href="records.html" class="flex flex-col items-center p-2 text-primary">
         <span class="material-symbols-outlined text-2xl">receipt_long</span>
-        <span class="text-xs mt-1">记录</span>
+        <span class="text-xs mt-1">明细</span>
       </a>
-      <a href="#" class="flex flex-col items-center p-2 -mt-6" onclick="window.parent && window.parent.showAddModal && window.parent.showAddModal(1); return false;">
+      <a href="#" class="flex flex-col items-center p-2 -mt-6">
         <div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
           <span class="material-symbols-outlined text-3xl text-white">add</span>
         </div>
@@ -107,79 +112,6 @@
       </a>
     </div>
   </nav>
-
-  <!-- Filter Modal -->
-  <div id="filter-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
-    <div class="absolute bottom-0 left-0 right-0 bg-surface-card rounded-t-2xl max-h-[80vh] overflow-y-auto">
-      <div class="sticky top-0 bg-surface-card p-4 border-b border-border-soft flex items-center justify-between">
-        <h3 class="font-semibold text-lg">筛选条件</h3>
-        <button onclick="closeFilterModal()" class="p-2 hover:bg-surface-cream rounded-full">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <div class="p-4 space-y-4">
-        <!-- Date Range -->
-        <div>
-          <label class="block text-sm font-medium text-text-secondary mb-2">日期范围</label>
-          <div class="flex gap-2">
-            <input type="date" id="filter-start-date" class="flex-1 h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none">
-            <span class="self-center text-text-muted">至</span>
-            <input type="date" id="filter-end-date" class="flex-1 h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none">
-          </div>
-        </div>
-
-        <!-- Quick Date Buttons -->
-        <div class="flex gap-2 flex-wrap">
-          <button class="px-3 py-1.5 rounded-full bg-surface-cream text-sm" onclick="setDateRange('today')">今天</button>
-          <button class="px-3 py-1.5 rounded-full bg-surface-cream text-sm" onclick="setDateRange('week')">本周</button>
-          <button class="px-3 py-1.5 rounded-full bg-surface-cream text-sm" onclick="setDateRange('month')">本月</button>
-          <button class="px-3 py-1.5 rounded-full bg-surface-cream text-sm" onclick="setDateRange('year')">本年</button>
-        </div>
-
-        <!-- Type -->
-        <div>
-          <label class="block text-sm font-medium text-text-secondary mb-2">收支类型</label>
-          <div class="flex gap-2">
-            <button class="filter-type-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-type="" onclick="selectFilterType(this)">全部</button>
-            <button class="filter-type-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent text-expense-coral" data-type="1" onclick="selectFilterType(this)">支出</button>
-            <button class="filter-type-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent text-income-mint" data-type="2" onclick="selectFilterType(this)">收入</button>
-          </div>
-        </div>
-
-        <!-- Status -->
-        <div>
-          <label class="block text-sm font-medium text-text-secondary mb-2">记录状态</label>
-          <div class="flex gap-2">
-            <button class="filter-status-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-status="" onclick="selectFilterStatus(this)">全部</button>
-            <button class="filter-status-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent text-income-mint" data-status="1" onclick="selectFilterStatus(this)">已收付</button>
-            <button class="filter-status-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent text-pending-amber" data-status="2" onclick="selectFilterStatus(this)">待收付</button>
-          </div>
-        </div>
-
-        <!-- Category -->
-        <div>
-          <label class="block text-sm font-medium text-text-secondary mb-2">分类</label>
-          <select id="filter-category" class="w-full h-12 px-4 rounded-lg bg-surface-cream border border-border-soft outline-none">
-            <option value="">全部分类</option>
-          </select>
-        </div>
-
-        <!-- Counterparty Type -->
-        <div>
-          <label class="block text-sm font-medium text-text-secondary mb-2">对方类型</label>
-          <div class="flex gap-2">
-            <button class="filter-counter-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-ctype="" onclick="selectFilterCounter(this)">全部</button>
-            <button class="filter-counter-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-ctype="1" onclick="selectFilterCounter(this)">客户</button>
-            <button class="filter-counter-btn flex-1 py-2.5 rounded-lg bg-surface-cream text-sm font-medium border-2 border-transparent" data-ctype="2" onclick="selectFilterCounter(this)">供应商</button>
-          </div>
-        </div>
-      </div>
-      <div class="sticky bottom-0 bg-surface-card p-4 border-t border-border-soft flex gap-3">
-        <button class="flex-1 h-12 rounded-xl bg-surface-cream text-text-secondary font-semibold" onclick="resetFilters()">重置</button>
-        <button class="flex-1 h-12 rounded-xl bg-primary text-white font-semibold" onclick="applyFilters()">应用筛选</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Detail Modal -->
   <div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
@@ -205,18 +137,13 @@
   <script src="../js/api.js"></script>
   <script src="../js/utils.js"></script>
   <script>
+    let currentYear = new Date().getFullYear();
+    let currentType = ''; // '', 1=支出, 2=收入
     let currentPage = 1;
-    let pageSize = 20;
-    let totalPages = 1;
+    let pageSize = 50;
+    let totalRecords = [];
+    let hasMore = false;
     let currentRecordId = null;
-    let categories = [];
-
-    let filterType = '';
-    let filterStatus = '';
-    let filterCounterType = '';
-    let filterStartDate = '';
-    let filterEndDate = '';
-    let filterCategory = '';
 
     // ============ Toast ============
     function showToast(message, type = 'info') {
@@ -243,33 +170,38 @@
       return true;
     }
 
+    // ============ Init ============
+    function initYearSelector() {
+      const select = document.getElementById('year-filter');
+      const currentYear = new Date().getFullYear();
+      let options = '';
+      for (let y = currentYear; y >= currentYear - 5; y--) {
+        options += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}年</option>`;
+      }
+      select.innerHTML = options;
+
+      // 默认选中"全部"
+      document.querySelector('.type-btn[data-type=""]').classList.add('bg-primary', 'text-white');
+    }
+
+    function selectType(btn) {
+      document.querySelectorAll('.type-btn').forEach(b => {
+        b.classList.remove('bg-primary', 'text-white', 'bg-surface-cream');
+      });
+      btn.classList.add('bg-primary', 'text-white');
+      currentType = btn.dataset.type;
+      currentPage = 1;
+      totalRecords = [];
+      loadData();
+    }
+
     // ============ Load Data ============
     async function loadData() {
       if (!checkAuth()) return;
 
-      // 加载分类
-      await loadCategories();
-
-      // 加载记录
-      await loadRecords();
-    }
-
-    async function loadCategories() {
-      try {
-        const res = await API.Category.getList();
-        categories = res.data;
-
-        // 填充筛选器中的分类选项
-        const select = document.getElementById('filter-category');
-        select.innerHTML = '<option value="">全部分类</option>' +
-          categories.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
-      } catch (e) {
-        console.error('加载分类失败:', e);
-      }
-    }
-
-    async function loadRecords() {
+      currentYear = parseInt(document.getElementById('year-filter').value);
       const container = document.getElementById('records-container');
+
       container.innerHTML = `
         <div class="p-8 text-center text-text-muted">
           <span class="material-symbols-outlined text-4xl animate-pulse">hourglass_empty</span>
@@ -283,69 +215,22 @@
           pageSize: pageSize
         };
 
-        if (filterType) params.type = filterType;
-        if (filterStatus) params.status = filterStatus;
-        if (filterCounterType) params.counterpartyType = filterCounterType;
-        if (filterStartDate) params.startDate = filterStartDate;
-        if (filterEndDate) params.endDate = filterEndDate;
-        if (filterCategory) params.categoryId = filterCategory;
+        if (currentType) params.type = currentType;
 
-        const res = await API.Transaction.getList(params);
+        const res = await API.Transaction.getYearlyList(currentYear, params);
         const { list, pagination } = res.data;
-        totalPages = pagination.totalPages;
 
-        updateFilterSummary();
-
-        if (list.length === 0) {
-          container.innerHTML = `
-            <div class="p-8 text-center text-text-muted">
-              <span class="material-symbols-outlined text-4xl">receipt_long</span>
-              <p class="mt-2">暂无记录</p>
-            </div>
-          `;
-          document.getElementById('pagination').innerHTML = '';
-          return;
+        if (currentPage === 1) {
+          totalRecords = list;
+        } else {
+          totalRecords = [...totalRecords, ...list];
         }
 
-        // 按日期分组
-        const grouped = {};
-        list.forEach(tx => {
-          if (!grouped[tx.date]) {
-            grouped[tx.date] = [];
-          }
-          grouped[tx.date].push(tx);
-        });
+        hasMore = currentPage < pagination.totalPages;
 
-        container.innerHTML = Object.entries(grouped).map(([date, transactions]) => `
-          <div class="border-b border-border-soft last:border-b-0">
-            <div class="px-4 py-2 bg-surface-cream/50 text-xs text-text-muted flex justify-between">
-              <span>${date}</span>
-              <span>${transactions.length} 笔</span>
-            </div>
-            ${transactions.map(tx => `
-              <div class="p-4 flex items-center gap-3 hover:bg-surface-cream cursor-pointer transition-colors" onclick="showDetail(${tx.id})">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl" style="background-color: ${tx.category_color}20">
-                  ${tx.category_icon}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-medium truncate">${tx.category_name}</div>
-                  <div class="text-xs text-text-muted flex items-center gap-2">
-                    ${tx.remark || '无备注'}
-                    ${tx.status === 2 ? '<span class="text-pending-amber">待收/待付</span>' : ''}
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="font-mono font-semibold ${tx.type === 1 ? 'text-expense-coral' : 'text-income-mint'}">
-                    ${tx.type === 1 ? '-' : '+'}¥${Utils.formatAmount(tx.amount)}
-                  </div>
-                  <div class="text-xs text-text-muted">${tx.payment_method_name || '其他'}</div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        `).join('');
+        renderRecords();
+        updateLoadMoreButton();
 
-        renderPagination();
       } catch (e) {
         console.error('加载记录失败:', e);
         container.innerHTML = `
@@ -357,163 +242,91 @@
       }
     }
 
-    function updateFilterSummary() {
-      const parts = [];
-      if (filterType) {
-        parts.push(filterType === '1' ? '支出' : '收入');
-      }
-      if (filterStatus) {
-        parts.push(filterStatus === '1' ? '已收付' : '待收付');
-      }
-      if (filterStartDate && filterEndDate) {
-        parts.push(`${filterStartDate} ~ ${filterEndDate}`);
-      }
-      document.getElementById('filter-summary').textContent = parts.length > 0 ? parts.join(' · ') : '全部记录';
-    }
+    function renderRecords() {
+      const container = document.getElementById('records-container');
 
-    function renderPagination() {
-      const container = document.getElementById('pagination');
-      if (totalPages <= 1) {
-        container.innerHTML = '';
+      if (totalRecords.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-text-muted">
+            <span class="material-symbols-outlined text-4xl">receipt_long</span>
+            <p class="mt-2">暂无记录</p>
+          </div>
+        `;
         return;
       }
 
-      let html = '';
-
-      if (currentPage > 1) {
-        html += `<button class="px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft" onclick="goToPage(${currentPage - 1})">
-          <span class="material-symbols-outlined text-lg">chevron_left</span>
-        </button>`;
-      }
-
-      // Page numbers
-      const start = Math.max(1, currentPage - 2);
-      const end = Math.min(totalPages, currentPage + 2);
-
-      if (start > 1) {
-        html += `<button class="px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft" onclick="goToPage(1)">1</button>`;
-        if (start > 2) html += '<span class="px-2 text-text-muted">...</span>';
-      }
-
-      for (let i = start; i <= end; i++) {
-        const active = i === currentPage ? 'bg-primary text-white' : 'bg-surface-card border border-border-soft';
-        html += `<button class="px-3 py-1.5 rounded-lg ${active}" onclick="goToPage(${i})">${i}</button>`;
-      }
-
-      if (end < totalPages) {
-        if (end < totalPages - 1) html += '<span class="px-2 text-text-muted">...</span>';
-        html += `<button class="px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft" onclick="goToPage(${totalPages})">${totalPages}</button>`;
-      }
-
-      if (currentPage < totalPages) {
-        html += `<button class="px-3 py-1.5 rounded-lg bg-surface-card border border-border-soft" onclick="goToPage(${currentPage + 1})">
-          <span class="material-symbols-outlined text-lg">chevron_right</span>
-        </button>`;
-      }
-
-      container.innerHTML = html;
-    }
-
-    function goToPage(page) {
-      currentPage = page;
-      loadRecords();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // ============ Filter Modal ============
-    function showFilterModal() {
-      document.getElementById('filter-modal').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeFilterModal() {
-      document.getElementById('filter-modal').classList.add('hidden');
-      document.body.style.overflow = '';
-    }
-
-    function setDateRange(range) {
-      const today = new Date();
-      let start, end;
-
-      switch (range) {
-        case 'today':
-          start = end = today.toISOString().split('T')[0];
-          break;
-        case 'week':
-          const dayOfWeek = today.getDay() || 7;
-          start = new Date(today.setDate(today.getDate() - dayOfWeek + 1)).toISOString().split('T')[0];
-          end = new Date().toISOString().split('T')[0];
-          break;
-        case 'month':
-          start = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
-          end = new Date().toISOString().split('T')[0];
-          break;
-        case 'year':
-          start = `${today.getFullYear()}-01-01`;
-          end = new Date().toISOString().split('T')[0];
-          break;
-      }
-
-      document.getElementById('filter-start-date').value = start;
-      document.getElementById('filter-end-date').value = end;
-    }
-
-    function selectFilterType(btn) {
-      document.querySelectorAll('.filter-type-btn').forEach(b => {
-        b.classList.remove('border-primary', 'bg-surface-cream');
+      // 按月份分组
+      const grouped = {};
+      totalRecords.forEach(tx => {
+        const month = tx.date.slice(0, 7); // YYYY-MM
+        if (!grouped[month]) {
+          grouped[month] = [];
+        }
+        grouped[month].push(tx);
       });
-      btn.classList.add('border-primary', 'bg-surface-cream');
-      filterType = btn.dataset.type;
+
+      // 排序月份（降序）
+      const sortedMonths = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+
+      container.innerHTML = sortedMonths.map(month => {
+        const monthName = month + '月';
+        const records = grouped[month];
+
+        // 计算当月收支小计
+        let monthIncome = 0, monthExpense = 0;
+        records.forEach(r => {
+          if (r.type === 2) monthIncome += parseFloat(r.amount);
+          else monthExpense += parseFloat(r.amount);
+        });
+
+        return `
+          <div class="mb-4 last:mb-0">
+            <!-- Month Header -->
+            <div class="sticky top-[120px] z-10 bg-surface-cream/95 backdrop-blur px-4 py-2 border-b border-border-soft">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-sm">${monthName}</span>
+                <div class="flex gap-4 text-xs">
+                  <span class="text-income-mint">收 ¥${Utils.formatAmount(monthIncome)}</span>
+                  <span class="text-expense-coral">支 ¥${Utils.formatAmount(monthExpense)}</span>
+                </div>
+              </div>
+            </div>
+            <!-- Records -->
+            <div class="divide-y divide-border-soft">
+              ${records.map(tx => `
+                <div class="p-4 flex items-center gap-3 hover:bg-surface-cream/50 cursor-pointer transition-colors" onclick="showDetail(${tx.id})">
+                  <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl" style="background-color: ${tx.category_color}20">
+                    ${tx.category_icon}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium truncate">${tx.category_name}</div>
+                    <div class="text-xs text-text-muted flex items-center gap-2">
+                      ${tx.date}
+                      ${tx.payment_method_name ? `<span>· ${tx.payment_method_name}</span>` : ''}
+                      ${tx.status === 2 ? '<span class="text-pending-amber">待收/待付</span>' : ''}
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-mono font-semibold ${tx.type === 1 ? 'text-expense-coral' : 'text-income-mint'}">
+                      ${tx.type === 1 ? '-' : '+'}¥${Utils.formatAmount(tx.amount)}
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
-    function selectFilterStatus(btn) {
-      document.querySelectorAll('.filter-status-btn').forEach(b => {
-        b.classList.remove('border-primary', 'bg-surface-cream');
-      });
-      btn.classList.add('border-primary', 'bg-surface-cream');
-      filterStatus = btn.dataset.status;
+    function updateLoadMoreButton() {
+      const container = document.getElementById('load-more-container');
+      container.style.display = hasMore ? 'block' : 'none';
     }
 
-    function selectFilterCounter(btn) {
-      document.querySelectorAll('.filter-counter-btn').forEach(b => {
-        b.classList.remove('border-primary', 'bg-surface-cream');
-      });
-      btn.classList.add('border-primary', 'bg-surface-cream');
-      filterCounterType = btn.dataset.ctype;
-    }
-
-    function resetFilters() {
-      filterType = '';
-      filterStatus = '';
-      filterCounterType = '';
-      filterStartDate = '';
-      filterEndDate = '';
-      filterCategory = '';
-      currentPage = 1;
-
-      document.getElementById('filter-start-date').value = '';
-      document.getElementById('filter-end-date').value = '';
-      document.getElementById('filter-category').value = '';
-
-      document.querySelectorAll('.filter-type-btn, .filter-status-btn, .filter-counter-btn').forEach(b => {
-        b.classList.remove('border-primary', 'bg-surface-cream');
-      });
-      document.querySelector('.filter-type-btn[data-type=""]').classList.add('border-primary', 'bg-surface-cream');
-      document.querySelector('.filter-status-btn[data-status=""]').classList.add('border-primary', 'bg-surface-cream');
-      document.querySelector('.filter-counter-btn[data-ctype=""]').classList.add('border-primary', 'bg-surface-cream');
-
-      loadRecords();
-      closeFilterModal();
-    }
-
-    function applyFilters() {
-      filterStartDate = document.getElementById('filter-start-date').value;
-      filterEndDate = document.getElementById('filter-end-date').value;
-      filterCategory = document.getElementById('filter-category').value;
-      currentPage = 1;
-
-      loadRecords();
-      closeFilterModal();
+    function loadMore() {
+      currentPage++;
+      loadData();
     }
 
     // ============ Detail Modal ============
@@ -587,7 +400,6 @@
     async function editRecord() {
       if (!currentRecordId) return;
       closeDetailModal();
-      // 跳转到首页打开编辑
       window.location.href = `index.html?edit=${currentRecordId}`;
     }
 
@@ -601,14 +413,24 @@
         await API.Transaction.delete(currentRecordId);
         showToast('删除成功', 'success');
         closeDetailModal();
-        loadRecords();
+        loadData();
       } catch (e) {
         showToast('删除失败: ' + e.message, 'error');
       }
     }
 
     // ============ Initialize ============
-    document.addEventListener('DOMContentLoaded', loadData);
+    document.addEventListener('DOMContentLoaded', () => {
+      initYearSelector();
+      loadData();
+
+      // 年份切换
+      document.getElementById('year-filter').addEventListener('change', () => {
+        currentPage = 1;
+        totalRecords = [];
+        loadData();
+      });
+    });
   </script>
 </body>
 </html>

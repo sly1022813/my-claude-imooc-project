@@ -100,6 +100,20 @@
       </button>
     </section>
 
+    <!-- Top Expense Categories -->
+    <section class="bg-surface-card rounded-xl border border-border-soft">
+      <div class="flex items-center justify-between p-4 border-b border-border-soft">
+        <h3 class="font-semibold text-on-surface">分类支出</h3>
+        <a href="pages/statistics.html" class="text-sm text-primary">查看统计</a>
+      </div>
+      <div id="top-categories">
+        <div class="p-8 text-center text-text-muted">
+          <span class="material-symbols-outlined text-4xl">category</span>
+          <p class="mt-2">加载中...</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Trend Chart -->
     <section class="bg-surface-card rounded-xl p-4 border border-border-soft">
       <div class="flex items-center justify-between mb-3">
@@ -264,10 +278,12 @@
 
       // 显示当前月份
       const now = new Date();
-      document.getElementById('current-month').textContent = `${now.getFullYear()}年${now.getMonth() + 1}月`;
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      document.getElementById('current-month').textContent = `${year}年${month}月`;
 
-      // 加载月度统计
-      await loadMonthlyStats();
+      // 加载月度统计（使用首页API）
+      await loadHomeData(year, month);
 
       // 加载分类
       await loadCategories();
@@ -279,17 +295,55 @@
       await loadTrend(7);
     }
 
-    async function loadMonthlyStats() {
+    async function loadHomeData(year, month) {
       try {
-        const res = await API.Transaction.getMonthlyStats(Utils.getCurrentMonth());
+        const res = await API.Transaction.getHomeData(year, month);
         const data = res.data;
 
         document.getElementById('month-income').textContent = `¥${Utils.formatAmount(data.totalIncome)}`;
         document.getElementById('month-expense').textContent = `¥${Utils.formatAmount(data.totalExpense)}`;
         document.getElementById('month-profit').textContent = `¥${Utils.formatAmount(data.netProfit)}`;
+
+        // 渲染分类支出
+        renderTopCategories(data.topExpenseCategories, data.totalExpense);
       } catch (e) {
-        console.error('加载月度统计失败:', e);
+        console.error('加载首页数据失败:', e);
       }
+    }
+
+    function renderTopCategories(categories, totalExpense) {
+      const container = document.getElementById('top-categories');
+
+      if (!categories || categories.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-text-muted">
+            <span class="material-symbols-outlined text-4xl">pie_chart</span>
+            <p class="mt-2">本月暂无支出</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = categories.map(c => {
+        const percent = totalExpense > 0 ? (parseFloat(c.total) / totalExpense * 100).toFixed(1) : 0;
+        return `
+          <div class="p-4 flex items-center gap-3 border-b border-border-soft last:border-b-0 hover:bg-surface-cream/50">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl" style="background-color: ${c.category_color}20">
+              ${c.category_icon}
+            </div>
+            <div class="flex-1">
+              <div class="flex justify-between text-sm mb-1">
+                <span class="font-medium">${c.category_name}</span>
+                <span class="font-mono font-semibold text-expense-coral">¥${Utils.formatAmount(c.total)}</span>
+              </div>
+              <div class="h-2 bg-surface-cream rounded-full overflow-hidden">
+                <div class="h-full bg-expense-coral rounded-full" style="width: ${percent}%"></div>
+              </div>
+            </div>
+            <span class="text-xs text-text-muted w-12 text-right">${percent}%</span>
+          </div>
+        `;
+      }).join('');
     }
 
     async function loadCategories() {
@@ -303,7 +357,18 @@
 
     async function loadRecentTransactions() {
       try {
-        const res = await API.Transaction.getList({ pageSize: 5 });
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+        const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+
+        const res = await API.Transaction.getList({
+          page: 1,
+          pageSize: 3,
+          startDate,
+          endDate
+        });
         const list = res.data.list;
 
         const container = document.getElementById('recent-list');
@@ -312,7 +377,7 @@
           container.innerHTML = `
             <div class="p-8 text-center text-text-muted">
               <span class="material-symbols-outlined text-4xl">receipt_long</span>
-              <p class="mt-2">暂无记录，开始记账吧~</p>
+              <p class="mt-2">本月暂无记录，开始记账吧~</p>
             </div>
           `;
           return;

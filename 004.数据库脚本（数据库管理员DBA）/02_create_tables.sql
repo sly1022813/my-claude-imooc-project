@@ -122,7 +122,7 @@ CREATE TABLE `transactions` (
     `amount` DECIMAL(15,2) NOT NULL COMMENT '金额(正数存储)',
     `category_id` BIGINT UNSIGNED NOT NULL COMMENT '分类ID',
     `date` DATE NOT NULL COMMENT '交易日期',
-    `time` TIME NOT NULL DEFAULT CURRENT_TIME COMMENT '交易时间',
+    `time` TIME NOT NULL DEFAULT CURRENT_TIME() COMMENT '交易时间',
     `payment_method` TINYINT DEFAULT NULL COMMENT '支付方式:1=现金,2=微信,3=支付宝,4=银行卡,5=其他',
     `counterparty` VARCHAR(200) DEFAULT NULL COMMENT '对方单位/客户/供应商名称',
     `counterparty_type` TINYINT DEFAULT NULL COMMENT '对方类型:1=客户,2=供应商,3=其他',

@@ -345,6 +345,147 @@ class TransactionModel {
   }
 
   /**
+   * 获取年度统计
+   * @param {number} userId - 用户ID
+   * @param {number} year - 年份
+   * @returns {Object} 统计数据
+   */
+  static async getYearlyStats(userId, year) {
+    // 基本统计
+    const [stats] = await pool.execute(
+      `SELECT
+        SUM(CASE WHEN type = 1 THEN amount ELSE 0 END) as total_expense,
+        SUM(CASE WHEN type = 2 THEN amount ELSE 0 END) as total_income,
+        SUM(CASE WHEN type = 2 THEN amount ELSE -amount END) as net_profit,
+        COUNT(CASE WHEN type = 1 THEN 1 END) as expense_count,
+        COUNT(CASE WHEN type = 2 THEN 1 END) as income_count
+       FROM transactions
+       WHERE user_id = ? AND YEAR(date) = ?`,
+      [userId, year]
+    );
+
+    // 分类统计
+    const [categoryStats] = await pool.execute(
+      `SELECT
+        t.category_id,
+        c.name as category_name,
+        c.icon as category_icon,
+        c.color as category_color,
+        t.type,
+        SUM(t.amount) as total_amount,
+        COUNT(*) as transaction_count
+       FROM transactions t
+       LEFT JOIN categories c ON t.category_id = c.id
+       WHERE t.user_id = ? AND YEAR(t.date) = ?
+       GROUP BY t.category_id, c.name, c.icon, c.color, t.type
+       ORDER BY t.type, total_amount DESC`,
+      [userId, year]
+    );
+
+    return {
+      ...stats[0],
+      categoryStats
+    };
+  }
+
+  /**
+   * 获取年度月度趋势（12个月）
+   * @param {number} userId - 用户ID
+   * @param {number} year - 年份
+   * @returns {Array} 每月数据
+   */
+  static async getYearlyMonthlyTrend(userId, year) {
+    const [rows] = await pool.execute(
+      `SELECT
+        MONTH(date) as month,
+        SUM(CASE WHEN type = 1 THEN amount ELSE 0 END) as monthly_expense,
+        SUM(CASE WHEN type = 2 THEN amount ELSE 0 END) as monthly_income,
+        SUM(CASE WHEN type = 2 THEN amount ELSE -amount END) as monthly_profit,
+        COUNT(*) as transaction_count
+       FROM transactions
+       WHERE user_id = ? AND YEAR(date) = ?
+       GROUP BY MONTH(date)
+       ORDER BY month ASC`,
+      [userId, year]
+    );
+
+    // 补全12个月的数据
+    const monthlyData = [];
+    for (let m = 1; m <= 12; m++) {
+      const found = rows.find(r => r.month === m);
+      monthlyData.push({
+        month: m,
+        month_name: `${m}月`,
+        monthly_expense: found ? parseFloat(found.monthly_expense) || 0 : 0,
+        monthly_income: found ? parseFloat(found.monthly_income) || 0 : 0,
+        monthly_profit: found ? parseFloat(found.monthly_profit) || 0 : 0,
+        transaction_count: found ? found.transaction_count : 0
+      });
+    }
+    return monthlyData;
+  }
+
+  /**
+   * 获取年度收支记录列表（按月份分组）
+   * @param {number} userId - 用户ID
+   * @param {number} year - 年份
+   * @param {Object} params - 查询参数
+   * @returns {Object} { list, total }
+   */
+  static async getYearlyList(userId, year, params = {}) {
+    const {
+      page = 1,
+      pageSize = 50,
+      type, // 1=支出, 2=收入
+      month // 1-12
+    } = params;
+
+    const offset = (page - 1) * pageSize;
+    const conditions = ['t.user_id = ?', 'YEAR(t.date) = ?'];
+    const values = [userId, year];
+
+    if (type) {
+      conditions.push('t.type = ?');
+      values.push(type);
+    }
+    if (month) {
+      conditions.push('MONTH(t.date) = ?');
+      values.push(month);
+    }
+
+    const whereClause = conditions.join(' AND ');
+
+    // 获取总数
+    const [countResult] = await pool.execute(
+      `SELECT COUNT(*) as total FROM transactions t WHERE ${whereClause}`,
+      values
+    );
+    const total = countResult[0].total;
+
+    // 获取列表
+    const [list] = await pool.execute(
+      `SELECT t.*,
+              c.name as category_name, c.icon as category_icon, c.color as category_color,
+              CASE t.payment_method
+                WHEN 1 THEN '现金'
+                WHEN 2 THEN '微信支付'
+                WHEN 3 THEN '支付宝'
+                WHEN 4 THEN '银行卡'
+                WHEN 5 THEN '其他'
+                ELSE '其他'
+              END as payment_method_name
+       FROM transactions t
+       LEFT JOIN categories c ON t.category_id = c.id
+       WHERE ${whereClause}
+       ORDER BY t.date DESC, t.time DESC
+       LIMIT ? OFFSET ?`,
+      [...values, parseInt(pageSize), parseInt(offset)]
+    );
+
+    return { list, total };
+  }
+
+  /**
    * 获取待收/待付款列表
    * @param {number} userId - 用户ID
    * @param {number} type - 类型 1=支出(待付), 2=收入(待收)
