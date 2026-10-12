@@ -8,7 +8,18 @@
       "Bash(unzip -o github-mcp-server_Windows_x86_64.zip)",
       "Read(//c/Users/Administrator/**)",
       "Bash(\"d:/claude-video-coding/mcp-tools/github-mcp-server.exe\" --help)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Read(//d/A应用开发/jdk-21/**)",
+      "Read(//d/A应用开发/meven/**)",
+      "Bash(setx JAVA_HOME \"D:\\\\A应用开发\\\\jdk-21\\\\jdk-21\")",
+      "Bash(setx MAVEN_HOME \"D:\\\\A应用开发\\\\meven\\\\apache-maven-3.10.0\")",
+      "Bash(setx PATH \"%PATH%;%JAVA_HOME%\\\\bin;%MAVEN_HOME%\\\\bin\")",
+      "Bash(powershell -Command ' *)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(mkdir -p \"d:/claude-video-coding/claude-my-product/light-accounting-java/src/main/java/com/lightaccounting\" \"d:/claude-video-coding/claude-my-product/light-accounting-java/src/main/resources\")"
+    ],
+    "additionalDirectories": [
+      "d:\\claude-video-coding\\claude-my-product\\light-accounting-java\\src\\main\\java\\com"
     ]
   }
 }

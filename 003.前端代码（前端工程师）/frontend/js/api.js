@@ -3,7 +3,7 @@
  * 轻记账前端 API 调用模块
  */
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:8080';
 
 // Token 存储键
 const TOKEN_KEY = 'light_accounting_token';
@@ -222,6 +222,37 @@ const SupplierAPI = {
   delete: (id) => del(`/api/suppliers/${id}`)
 };
 
+// ============ 账户 API ============
+
+const AccountAPI = {
+  // 获取用户信息
+  getProfile: () => get('/api/accounts/profile'),
+
+  // 更新用户信息
+  updateProfile: (data) => put('/api/accounts/profile', data),
+
+  // 修改密码
+  changePassword: (data) => put('/api/accounts/password', data),
+
+  // 上传头像
+  uploadAvatar: (data) => post('/api/accounts/avatar', data),
+
+  // 获取账户列表
+  getList: (params) => get('/api/accounts', params),
+
+  // 获取账户详情
+  getById: (id) => get(`/api/accounts/${id}`),
+
+  // 创建账户
+  create: (data) => post('/api/accounts', data),
+
+  // 更新账户
+  update: (id, data) => put(`/api/accounts/${id}`, data),
+
+  // 删除账户
+  delete: (id) => del(`/api/accounts/${id}`)
+};
+
 // ============ 认证状态管理 ============
 
 /**
@@ -280,6 +311,7 @@ window.API = {
   Transaction: TransactionAPI,
   Customer: CustomerAPI,
   Supplier: SupplierAPI,
+  Account: AccountAPI,
   isLoggedIn,
   getCurrentUser,
   getToken,

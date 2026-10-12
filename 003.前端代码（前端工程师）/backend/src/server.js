@@ -13,6 +13,7 @@ const categoryRoutes = require('./routes/categories');
 const transactionRoutes = require('./routes/transactions');
 const customerRoutes = require('./routes/customers');
 const supplierRoutes = require('./routes/suppliers');
+const accountRoutes = require('./routes/accounts');
 
 // 创建Express应用
 const app = express();
@@ -64,6 +65,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/suppliers', supplierRoutes);
+app.use('/api/accounts', accountRoutes);
 
 // ==================== 错误处理 ====================
 

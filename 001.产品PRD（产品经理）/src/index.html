@@ -94,26 +94,29 @@
                 </main>
             </div>
 
-            <!-- 记录列表页 -->
+            <!-- 记录列表页（明细） -->
             <div id="page-records" class="page">
                 <header class="header">
                     <div class="header-content">
                         <button class="btn-icon back-btn" onclick="switchTab('home')">
                             <span>←</span>
                         </button>
-                        <h1 class="page-title">收支记录</h1>
+                        <h1 class="page-title">收支明细</h1>
                         <div style="width: 40px;"></div>
                     </div>
                 </header>
+
+                <div class="detail-month-selector">
+                    <button class="month-nav" onclick="changeDetailMonth(-1)">‹</button>
+                    <span class="current-month" id="detail-current-month"></span>
+                    <button class="month-nav" onclick="changeDetailMonth(1)">›</button>
+                </div>
 
                 <div class="filter-bar">
                     <div class="filter-tabs">
                         <button class="filter-tab active" data-type="all" onclick="filterRecords('all')">全部</button>
                         <button class="filter-tab" data-type="expense" onclick="filterRecords('expense')">支出</button>
                         <button class="filter-tab" data-type="income" onclick="filterRecords('income')">收入</button>
-                    </div>
-                    <div class="filter-date">
-                        <input type="date" id="filter-date" onchange="filterRecords()">
                     </div>
                 </div>
 
@@ -130,18 +133,18 @@
             <div id="page-stats" class="page">
                 <header class="header">
                     <div class="header-content">
-                        <h1 class="page-title">📊 统计</h1>
+                        <h1 class="page-title">📊 统计分析</h1>
                     </div>
                 </header>
 
-                <div class="stats-month-selector">
-                    <button class="month-nav" onclick="changeStatsMonth(-1)">‹</button>
-                    <span class="current-month" id="stats-current-month"></span>
-                    <button class="month-nav" onclick="changeStatsMonth(1)">›</button>
+                <div class="stats-year-selector">
+                    <button class="year-nav" onclick="changeStatsYear(-1)">‹</button>
+                    <span class="current-year" id="stats-current-year"></span>
+                    <button class="year-nav" onclick="changeStatsYear(1)">›</button>
                 </div>
 
                 <main class="main-content">
-                    <!-- 月度总览 -->
+                    <!-- 年度总览 -->
                     <div class="stats-overview">
                         <div class="stat-card income">
                             <span class="stat-label">总收入</span>
@@ -157,7 +160,7 @@
                         </div>
                     </div>
 
-                    <!-- 分类占比 -->
+                    <!-- 支出分类占比 -->
                     <div class="stats-section">
                         <h3>支出分类占比</h3>
                         <div class="category-chart" id="category-chart">
@@ -168,12 +171,19 @@
                         </div>
                     </div>
 
-                    <!-- 趋势图 -->
+                    <!-- 收支趋势 -->
                     <div class="stats-section">
                         <h3>📈 收支趋势</h3>
                         <div class="trend-chart" id="trend-chart">
                             <!-- 动态填充 -->
                         </div>
+                    </div>
+
+                    <!-- 导出Excel -->
+                    <div class="stats-section">
+                        <button class="btn-export" onclick="exportExcel()">
+                            <span>📥</span> 导出Excel报表
+                        </button>
                     </div>
                 </main>
             </div>
@@ -388,6 +398,7 @@
     </div>
 
     <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

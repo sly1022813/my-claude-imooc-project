@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF8FAB">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>设置 - 轻记账</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div class="page-container">
+            <!-- 设置页面 -->
+            <div id="page-settings" class="page active">
+                <header class="header">
+                    <div class="header-content">
+                        <button class="btn-icon back-btn" onclick="goBack()">
+                            <span>←</span>
+                        </button>
+                        <h1 class="page-title">设置</h1>
+                        <div style="width: 40px;"></div>
+                    </div>
+                </header>
+
+                <main class="main-content">
+                    <!-- 用户信息卡片 -->
+                    <div class="profile-card settings-profile">
+                        <div class="avatar-wrapper" onclick="showAvatarUpload()">
+                            <img id="user-avatar" class="profile-avatar" src="" alt="头像">
+                            <div class="avatar-edit-icon">📷</div>
+                        </div>
+                        <div class="profile-info">
+                            <span class="profile-name" id="user-name">轻记账用户</span>
+                            <span class="profile-date">记账第 <span id="record-days">0</span> 天</span>
+                        </div>
+                    </div>
+
+                    <!-- 设置菜单 -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h3>账户管理</h3>
+                        </div>
+                        <div class="menu-list">
+                            <div class="menu-item" onclick="showAccountManage()">
+                                <span class="menu-icon">💳</span>
+                                <span class="menu-text">账户管理</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h3>分类管理</h3>
+                        </div>
+                        <div class="menu-list">
+                            <div class="menu-item" onclick="showCategoryManage('expense')">
+                                <span class="menu-icon">💸</span>
+                                <span class="menu-text">支出分类</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                            <div class="menu-item" onclick="showCategoryManage('income')">
+                                <span class="menu-icon">💰</span>
+                                <span class="menu-text">收入分类</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h3>个人设置</h3>
+                        </div>
+                        <div class="menu-list">
+                            <div class="menu-item" onclick="showEditProfile()">
+                                <span class="menu-icon">👤</span>
+                                <span class="menu-text">编辑资料</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                            <div class="menu-item" onclick="showChangePassword()">
+                                <span class="menu-icon">🔐</span>
+                                <span class="menu-text">修改密码</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h3>数据管理</h3>
+                        </div>
+                        <div class="menu-list">
+                            <div class="menu-item" onclick="exportData()">
+                                <span class="menu-icon">📤</span>
+                                <span class="menu-text">导出数据</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                            <div class="menu-item" onclick="importData()">
+                                <span class="menu-icon">📥</span>
+                                <span class="menu-text">导入数据</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="menu-list">
+                            <div class="menu-item danger" onclick="logout()">
+                                <span class="menu-icon">🚪</span>
+                                <span class="menu-text">退出登录</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="version-info">
+                        <p>轻记账 v1.0.0 💕</p>
+                    </div>
+                </main>
+            </div>
+
+            <!-- 账户管理页面 -->
+            <div id="page-account-manage" class="page">
+                <header class="header">
+                    <div class="header-content">
+                        <button class="btn-icon back-btn" onclick="showSettings()">
+                            <span>←</span>
+                        </button>
+                        <h1 class="page-title">账户管理</h1>
+                        <button class="btn-icon" onclick="showAddAccount()">
+                            <span>+</span>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="account-list" id="account-list">
+                    <!-- 动态填充 -->
+                </div>
+                <div class="empty-state" id="empty-accounts" style="display: none;">
+                    <div class="empty-icon">💳</div>
+                    <p>还没有账户~</p>
+                    <button class="btn-primary" onclick="showAddAccount()">添加账户</button>
+                </div>
+            </div>
+
+            <!-- 分类管理页面 -->
+            <div id="page-category-manage" class="page">
+                <header class="header">
+                    <div class="header-content">
+                        <button class="btn-icon back-btn" onclick="showSettings()">
+                            <span>←</span>
+                        </button>
+                        <h1 class="page-title" id="category-manage-title">分类管理</h1>
+                        <button class="btn-icon" onclick="showAddCategory()">
+                            <span>+</span>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="filter-bar">
+                    <div class="filter-tabs">
+                        <button class="filter-tab" data-type="expense" onclick="switchCategoryType('expense')">支出</button>
+                        <button class="filter-tab" data-type="income" onclick="switchCategoryType('income')">收入</button>
+                    </div>
+                </div>
+
+                <div class="category-manage-list" id="category-manage-list">
+                    <!-- 动态填充 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 通用模态框 -->
+        <div class="modal" id="settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-title">标题</h3>
+                    <button class="btn-close" onclick="hideModal()">×</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- 动态内容 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast 提示 -->
+        <div class="toast" id="toast">
+            <span class="toast-icon">✨</span>
+            <span class="toast-message"></span>
+        </div>
+    </div>
+
+    <script>
+        // API配置
+        const API_BASE = 'http://localhost:3000/api';
+
+        // 全局状态
+        let currentUser = null;
+        let token = localStorage.getItem('token');
+        let currentCategoryType = 'expense';
+        let editingAccountId = null;
+        let editingCategoryId = null;
+
+        // API请求封装
+        async function apiRequest(url, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const response = await fetch(`${API_BASE}${url}`, {
+                ...options,
+                headers
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || '请求失败');
+            }
+
+            return data;
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+        });
+
+        async function init() {
+            if (!token) {
+                showToast('请先登录');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+                return;
+            }
+
+            await loadUserProfile();
+        }
+
+        // 加载用户信息
+        async function loadUserProfile() {
+            try {
+                const res = await apiRequest('/accounts/profile');
+                currentUser = res.data;
+
+                document.getElementById('user-name').textContent = currentUser.nickname || currentUser.username;
+                document.getElementById('record-days').textContent = currentUser.recordDays || 0;
+
+                const avatarEl = document.getElementById('user-avatar');
+                if (currentUser.avatar_url) {
+                    avatarEl.src = currentUser.avatar_url.startsWith('http')
+                        ? currentUser.avatar_url
+                        : `${API_BASE.replace('/api', '')}${currentUser.avatar_url}`;
+                } else {
+                    avatarEl.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌸</text></svg>';
+                }
+            } catch (err) {
+                console.error('加载用户信息失败:', err);
+            }
+        }
+
+        // 页面导航
+        function showSettings() {
+            switchPage('settings');
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(`page-${pageId}`).classList.add('active');
+        }
+
+        // ========== 账户管理 ==========
+
+        async function showAccountManage() {
+            switchPage('account-manage');
+            await loadAccounts();
+        }
+
+        async function loadAccounts() {
+            try {
+                const res = await apiRequest('/accounts');
+                const accounts = res.data || [];
+                renderAccounts(accounts);
+            } catch (err) {
+                console.error('加载账户失败:', err);
+                showToast('加载账户失败');
+            }
+        }
+
+        function renderAccounts(accounts) {
+            const container = document.getElementById('account-list');
+            const emptyState = document.getElementById('empty-accounts');
+
+            if (accounts.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            container.innerHTML = accounts.map(account => `
+                <div class="account-item">
+                    <div class="account-icon" style="background: ${account.color || '#FF8FAB'}">${account.icon || '💳'}</div>
+                    <div class="account-info">
+                        <div class="account-name">${account.name}</div>
+                        <div class="account-type">${getAccountTypeName(account.type)}</div>
+                    </div>
+                    <div class="account-balance">¥${parseFloat(account.balance || 0).toFixed(2)}</div>
+                    <div class="account-actions">
+                        <button class="action-btn-small secondary" onclick="editAccount(${account.id})">编辑</button>
+                        <button class="action-btn-small danger" onclick="deleteAccount(${account.id})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getAccountTypeName(type) {
+            const types = {
+                'cash': '现金',
+                'bank': '银行卡',
+                'wechat': '微信',
+                'alipay': '支付宝',
+                'credit': '信用卡',
+                'other': '其他'
+            };
+            return types[type] || '其他';
+        }
+
+        function showAddAccount() {
+            editingAccountId = null;
+            showModalForm('添加账户', `
+                <div class="form-group">
+                    <label>账户名称</label>
+                    <input type="text" id="account-name" placeholder="请输入账户名称" required>
+                </div>
+                <div class="form-group">
+                    <label>账户类型</label>
+                    <select id="account-type">
+                        <option value="cash">💵 现金</option>
+                        <option value="bank">💳 银行卡</option>
+                        <option value="wechat">💚 微信</option>
+                        <option value="alipay">💙 支付宝</option>
+                        <option value="credit">💳 信用卡</option>
+                        <option value="other">📌 其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>余额</label>
+                    <input type="number" id="account-balance" placeholder="0.00" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label>图标</label>
+                    <div class="icon-selector">
+                        <button class="icon-btn selected" data-icon="💳" onclick="selectIcon(this)">💳</button>
+                        <button class="icon-btn" data-icon="💵" onclick="selectIcon(this)">💵</button>
+                        <button class="icon-btn" data-icon="💚" onclick="selectIcon(this)">💚</button>
+                        <button class="icon-btn" data-icon="💙" onclick="selectIcon(this)">💙</button>
+                        <button class="icon-btn" data-icon="🪙" onclick="selectIcon(this)">🪙</button>
+                        <button class="icon-btn" data-icon="🏦" onclick="selectIcon(this)">🏦</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>颜色</label>
+                    <input type="color" id="account-color" value="#FF8FAB">
+                </div>
+                <button class="btn-submit" onclick="saveAccount()">保存</button>
+            `);
+        }
+
+        function selectIcon(btn) {
+            document.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        async function saveAccount() {
+            const name = document.getElementById('account-name').value.trim();
+            const type = document.getElementById('account-type').value;
+            const balance = parseFloat(document.getElementById('account-balance').value) || 0;
+            const icon = document.querySelector('.icon-btn.selected')?.dataset.icon || '💳';
+            const color = document.getElementById('account-color').value;
+
+            if (!name) {
+                showToast('请输入账户名称');
+                return;
+            }
+
+            try {
+                if (editingAccountId) {
+                    await apiRequest(`/accounts/${editingAccountId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ name, type, balance, icon, color })
+                    });
+                    showToast('✨ 账户已更新');
+                } else {
+                    await apiRequest('/accounts', {
+                        method: 'POST',
+                        body: JSON.stringify({ name, type, balance, icon, color })
+                    });
+                    showToast('✨ 账户已添加');
+                }
+
+                hideModal();
+                await loadAccounts();
+            } catch (err) {
+                showToast(err.message || '保存失败');
+            }
+        }
+
+        async function editAccount(id) {
+            try {
+                const res = await apiRequest('/accounts');
+                const accounts = res.data || [];
+                const account = accounts.find(a => a.id === id);
+
+                if (!account) {
+                    showToast('账户不存在');
+                    return;
+                }
+
+                editingAccountId = id;
+                showModalForm('编辑账户', `
+                    <div class="form-group">
+                        <label>账户名称</label>
+                        <input type="text" id="account-name" value="${account.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>账户类型</label>
+                        <select id="account-type">
+                            <option value="cash" ${account.type === 'cash' ? 'selected' : ''}>💵 现金</option>
+                            <option value="bank" ${account.type === 'bank' ? 'selected' : ''}>💳 银行卡</option>
+                            <option value="wechat" ${account.type === 'wechat' ? 'selected' : ''}>💚 微信</option>
+                            <option value="alipay" ${account.type === 'alipay' ? 'selected' : ''}>💙 支付宝</option>
+                            <option value="credit" ${account.type === 'credit' ? 'selected' : ''}>💳 信用卡</option>
+                            <option value="other" ${account.type === 'other' ? 'selected' : ''}>📌 其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>余额</label>
+                        <input type="number" id="account-balance" value="${account.balance || 0}" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>图标</label>
+                        <div class="icon-selector">
+                            ${['💳', '💵', '💚', '💙', '🪙', '🏦'].map(i => `
+                                <button class="icon-btn ${account.icon === i ? 'selected' : ''}" data-icon="${i}" onclick="selectIcon(this)">${i}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>颜色</label>
+                        <input type="color" id="account-color" value="${account.color || '#FF8FAB'}">
+                    </div>
+                    <button class="btn-submit" onclick="saveAccount()">保存</button>
+                `);
+            } catch (err) {
+                showToast('加载账户信息失败');
+            }
+        }
+
+        async function deleteAccount(id) {
+            if (!confirm('确定要删除这个账户吗？')) return;
+
+            try {
+                await apiRequest(`/accounts/${id}`, { method: 'DELETE' });
+                showToast('✨ 账户已删除');
+                await loadAccounts();
+            } catch (err) {
+                showToast(err.message || '删除失败');
+            }
+        }
+
+        // ========== 分类管理 ==========
+
+        async function showCategoryManage(type) {
+            currentCategoryType = type === 'expense' ? 1 : 2;
+            switchPage('category-manage');
+            document.getElementById('category-manage-title').textContent = type === 'expense' ? '支出分类' : '收入分类';
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.type === type);
+            });
+            await loadCategories();
+        }
+
+        function switchCategoryType(type) {
+            showCategoryManage(type);
+        }
+
+        async function loadCategories() {
+            try {
+                const res = await apiRequest(`/categories?type=${currentCategoryType}`);
+                const categories = res.data || [];
+                renderCategories(categories);
+            } catch (err) {
+                console.error('加载分类失败:', err);
+                showToast('加载分类失败');
+            }
+        }
+
+        function renderCategories(categories) {
+            const container = document.getElementById('category-manage-list');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-manage-item ${cat.is_system == 1 ? 'system' : ''}">
+                    <div class="category-info">
+                        <span class="category-icon" style="background: ${cat.color || '#FF8FAB'}">${cat.icon || '📌'}</span>
+                        <span class="category-name">${cat.name}</span>
+                        ${cat.is_system == 1 ? '<span class="system-tag">系统</span>' : ''}
+                    </div>
+                    <div class="category-actions">
+                        ${cat.is_system != 1 ? `
+                            <button class="action-btn-small secondary" onclick="editCategory(${cat.id})">编辑</button>
+                            <button class="action-btn-small danger" onclick="deleteCategory(${cat.id})">删除</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddCategory() {
+            editingCategoryId = null;
+            showModalForm('添加分类', `
+                <div class="form-group">
+                    <label>分类名称</label>
+                    <input type="text" id="category-name" placeholder="请输入分类名称" required>
+                </div>
+                <div class="form-group">
+                    <label>图标</label>
+                    <div class="icon-selector">
+                        ${['🍜', '🛒', '🚗', '🎮', '🏠', '💊', '📚', '📱', '👕', '📦', '💡', '🎁', '💰', '🛠️', '📌'].map(icon => `
+                            <button class="icon-btn" data-icon="${icon}" onclick="selectIcon(this)">${icon}</button>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>颜色</label>
+                    <input type="color" id="category-color" value="#FF8FAB">
+                </div>
+                <button class="btn-submit" onclick="saveCategory()">保存</button>
+            `);
+        }
+
+        async function saveCategory() {
+            const name = document.getElementById('category-name').value.trim();
+            const icon = document.querySelector('.icon-btn.selected')?.dataset.icon || '📌';
+            const color = document.getElementById('category-color').value;
+
+            if (!name) {
+                showToast('请输入分类名称');
+                return;
+            }
+
+            try {
+                if (editingCategoryId) {
+                    await apiRequest(`/categories/${editingCategoryId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ name, icon, color })
+                    });
+                    showToast('✨ 分类已更新');
+                } else {
+                    await apiRequest('/categories', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            type: currentCategoryType,
+                            name,
+                            icon,
+                            color
+                        })
+                    });
+                    showToast('✨ 分类已添加');
+                }
+
+                hideModal();
+                await loadCategories();
+            } catch (err) {
+                showToast(err.message || '保存失败');
+            }
+        }
+
+        async function editCategory(id) {
+            try {
+                const res = await apiRequest(`/categories/${id}`);
+                const category = res.data;
+
+                if (!category) {
+                    showToast('分类不存在');
+                    return;
+                }
+
+                editingCategoryId = id;
+                showModalForm('编辑分类', `
+                    <div class="form-group">
+                        <label>分类名称</label>
+                        <input type="text" id="category-name" value="${category.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>图标</label>
+                        <div class="icon-selector">
+                            ${['🍜', '🛒', '🚗', '🎮', '🏠', '💊', '📚', '📱', '👕', '📦', '💡', '🎁', '💰', '🛠️', '📌'].map(icon => `
+                                <button class="icon-btn ${category.icon === icon ? 'selected' : ''}" data-icon="${icon}" onclick="selectIcon(this)">${icon}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>颜色</label>
+                        <input type="color" id="category-color" value="${category.color || '#FF8FAB'}">
+                    </div>
+                    <button class="btn-submit" onclick="saveCategory()">保存</button>
+                `);
+            } catch (err) {
+                showToast('加载分类信息失败');
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('确定要删除这个分类吗？')) return;
+
+            try {
+                await apiRequest(`/categories/${id}`, { method: 'DELETE' });
+                showToast('✨ 分类已删除');
+                await loadCategories();
+            } catch (err) {
+                showToast(err.message || '删除失败');
+            }
+        }
+
+        // ========== 编辑资料 ==========
+
+        function showEditProfile() {
+            if (!currentUser) return;
+
+            showModalForm('编辑资料', `
+                <div class="form-group">
+                    <label>昵称</label>
+                    <input type="text" id="edit-nickname" value="${currentUser.nickname || ''}" placeholder="请输入昵称">
+                </div>
+                <div class="form-group">
+                    <label>手机号</label>
+                    <input type="tel" id="edit-phone" value="${currentUser.phone || ''}" placeholder="请输入手机号">
+                </div>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="edit-email" value="${currentUser.email || ''}" placeholder="请输入邮箱">
+                </div>
+                ${currentUser.user_type > 1 ? `
+                <div class="form-group">
+                    <label>商户名称</label>
+                    <input type="text" id="edit-business" value="${currentUser.business_name || ''}" placeholder="请输入商户名称">
+                </div>
+                ` : ''}
+                <button class="btn-submit" onclick="saveProfile()">保存</button>
+            `);
+        }
+
+        async function saveProfile() {
+            const nickname = document.getElementById('edit-nickname').value.trim();
+            const phone = document.getElementById('edit-phone').value.trim();
+            const email = document.getElementById('edit-email').value.trim();
+            const businessName = document.getElementById('edit-business')?.value?.trim();
+
+            try {
+                await apiRequest('/accounts/profile', {
+                    method: 'PUT',
+                    body: JSON.stringify({ nickname, phone, email, businessName })
+                });
+
+                showToast('✨ 资料已更新');
+                hideModal();
+                await loadUserProfile();
+            } catch (err) {
+                showToast(err.message || '保存失败');
+            }
+        }
+
+        // ========== 修改密码 ==========
+
+        function showChangePassword() {
+            showModalForm('修改密码', `
+                <div class="form-group">
+                    <label>原密码</label>
+                    <input type="password" id="old-password" placeholder="请输入原密码">
+                </div>
+                <div class="form-group">
+                    <label>新密码</label>
+                    <input type="password" id="new-password" placeholder="请输入新密码（至少6位）">
+                </div>
+                <div class="form-group">
+                    <label>确认新密码</label>
+                    <input type="password" id="confirm-password" placeholder="请再次输入新密码">
+                </div>
+                <button class="btn-submit" onclick="submitChangePassword()">确认修改</button>
+            `);
+        }
+
+        async function submitChangePassword() {
+            const oldPassword = document.getElementById('old-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                showToast('请填写完整的密码信息');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showToast('新密码长度不能少于6位');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showToast('两次输入的新密码不一致');
+                return;
+            }
+
+            try {
+                await apiRequest('/accounts/password', {
+                    method: 'PUT',
+                    body: JSON.stringify({ oldPassword, newPassword })
+                });
+
+                showToast('✨ 密码修改成功');
+                hideModal();
+            } catch (err) {
+                showToast(err.message || '修改失败');
+            }
+        }
+
+        // ========== 头像上传 ==========
+
+        function showAvatarUpload() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('图片大小不能超过2MB');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('avatar', file);
+
+                try {
+                    const response = await fetch(`${API_BASE}/accounts/avatar`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showToast('✨ 头像上传成功');
+                        await loadUserProfile();
+                    } else {
+                        showToast(data.message || '上传失败');
+                    }
+                } catch (err) {
+                    showToast('上传失败，请重试');
+                }
+            };
+
+            input.click();
+        }
+
+        // ========== 数据导入导出 ==========
+
+        async function exportData() {
+            try {
+                const res = await apiRequest('/transactions?pageSize=99999');
+                const transactions = res.data?.list || [];
+
+                const data = {
+                    version: '1.0',
+                    exportedAt: new Date().toISOString(),
+                    transactions
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `轻记账备份_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                showToast('✨ 数据已导出');
+            } catch (err) {
+                showToast('导出失败');
+            }
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        showToast('✨ 数据格式正确（请注意：完整导入需要后端支持）');
+                    } catch (err) {
+                        showToast('导入失败，文件格式错误');
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+            input.click();
+        }
+
+        // ========== 退出登录 ==========
+
+        function logout() {
+            if (!confirm('确定要退出登录吗？')) return;
+
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // ========== 模态框 ==========
+
+        function showModalForm(title, content) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = content;
+            document.getElementById('settings-modal').classList.add('active');
+        }
+
+        function hideModal() {
+            document.getElementById('settings-modal').classList.remove('active');
+        }
+
+        // ========== Toast提示 ==========
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-message').textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+
+    <style>
+        /* 额外样式 */
+        .settings-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .avatar-edit-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .settings-section {
+            margin-bottom: 16px;
+        }
+
+        .settings-section .section-header {
+            padding: 8px 16px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .menu-item.danger {
+            color: #FF6B6B;
+        }
+
+        .version-info {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* 账户列表 */
+        .account-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .account-info {
+            flex: 1;
+        }
+
+        .account-name {
+            font-weight: 500;
+        }
+
+        .account-type {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .account-balance {
+            font-weight: 600;
+            color: var(--income);
+        }
+
+        .account-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 分类管理 */
+        .category-manage-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-manage-item.system {
+            opacity: 0.7;
+        }
+
+        .category-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .category-name {
+            font-weight: 500;
+        }
+
+        .system-tag {
+            font-size: 10px;
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        .category-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 模态框 */
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+
+        .icon-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .icon-btn.selected {
+            border-color: var(--primary);
+            background: rgba(255, 143, 171, 0.1);
+        }
+
+        /* 按钮样式 */
+        .action-btn-small {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .action-btn-small.secondary {
+            background: #f0f0f0;
+            color: var(--text);
+        }
+
+        .action-btn-small.danger {
+            background: #ffe0e0;
+            color: #FF6B6B;
+        }
+
+        .action-btn-small.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        .btn-submit:active {
+            opacity: 0.8;
+        }
+    </style>
+</body>
+</html>

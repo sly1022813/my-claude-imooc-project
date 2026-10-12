@@ -138,7 +138,13 @@ class UserModel {
    * @returns {boolean}
    */
   static async verifyPassword(plainPassword, hashedPassword) {
-    return await bcrypt.compare(plainPassword, hashedPassword);
+    // 优先使用 bcrypt 验证
+    const bcryptMatch = await bcrypt.compare(plainPassword, hashedPassword);
+    if (bcryptMatch) return true;
+
+    // 兼容旧格式：Base64 编码的明文密码
+    const base64Match = Buffer.from(plainPassword).toString('base64') === hashedPassword;
+    return base64Match;
   }
 
   /**
